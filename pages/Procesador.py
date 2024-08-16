@@ -100,6 +100,8 @@ def process_data(df, option = option):
 
             inc_statem_df = df[(df["Clase"] > 3)]
             inc_statem_df = inc_statem_df.drop(columns = ["Saldo Neto"])
+            inc_statem_df["Saldo Neto"] = df["Haber"] - df["Debe"]
+            
             general = []
             for i in inc_statem_df["Cuenta"]:
                 general.append(i[:4])
@@ -120,7 +122,6 @@ def process_data(df, option = option):
             detalle_deseado_df = detalle_df.merge(nivel_deseado_df, on = "Cuenta General", how = "left")[["Cuenta General", "Nivel Deseado"]].drop_duplicates()
             
             inc_statem_df = inc_statem_df.merge(detalle_deseado_df, on = "Cuenta General", how = "left")
-            inc_statem_df["Saldo Neto"] = df["Debe"] - df["Haber"]
             
             inc_statem_df = inc_statem_df[inc_statem_df["Nivel"] == inc_statem_df["Nivel Deseado"]]
             inc_statem_df = inc_statem_df[["Cuenta", "Nombre", "Saldo Neto"]]
