@@ -64,11 +64,11 @@ def get_website_content(url, df, df_final, df_concept_colors):
             r_counter = 0
             for r in top_rows:
                 st.markdown(r)
-                cell = "//div[@class='dsg-row'][@style='"+ r +"']//div[@class='dsg-cell']//input[@class='dsg-input']"
+                cell = "//div[@class='dsg-row'][@style='"+ r +"']//div[@class='dsg-cell']"
                 #cell = "//div[@class='dsg-row'][@style='"+ r +"']//div[@class='dsg-cell'][@style='"+ c +"']//input[@class='dsg-input']"
 
                 cell_field = driver.find_elements("xpath", cell[c_counter])
-                st.markdown(cell_field.text)
+                st.markdown(cell_field[0].text)
                 st.markdown(len(cell_field))
                 #cell_field = WebDriverWait(driver, 2).until(ec.element_to_be_clickable((By.CSS_SELECTOR, cell))).click()
                 ActionChains(driver).click(cell_field[0]).perform()
