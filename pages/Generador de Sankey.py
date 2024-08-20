@@ -61,11 +61,10 @@ def get_website_content(url, df, df_final, df_concept_colors):
         r_counter = 0
         
         for r in top_rows:
-            st.markdown(r)
+            st.markdown("Corriendo: "+str(r_counter+1)+"/"+len(cells_fields))
             cells = "//div[@class='dsg-row'][@style='"+ r +"']//div[@class='dsg-cell']"
             #cell = "//div[@class='dsg-row'][@style='"+ r +"']//div[@class='dsg-cell'][@style='"+ c +"']//input[@class='dsg-input']"
             cells_fields = driver.find_elements("xpath", cells)
-            st.markdown(len(cells_fields))
             c_counter = 0
             
             for cell in cells_fields:
@@ -80,8 +79,10 @@ def get_website_content(url, df, df_final, df_concept_colors):
             r_counter += 1
         
         #Fix Colors
+        st.markdown("Datos Completos")
         color_tab_field = driver.find_element("xpath", "//button[@id='tabs-:r3:--tab-1']")
         ActionChains(driver).click(color_tab_field).perform()
+        st.markdown("Definiendo Colores")
         
         #Color Nodes
         colors_rect =  driver.find_elements("tag name", "g")
