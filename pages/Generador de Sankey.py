@@ -107,7 +107,8 @@ def get_website_content(url, df, df_final, df_concept_colors):
         st.markdown("Colores Definidos en Nodos")
         
         for c in range(len(nodes_location)):
-            element = nodes_location[c].find_element("tag name", "rect")
+            st.markdown(nodes_location.text)
+            element = nodes_location[c].find_element("xpath", "//g//rect")
             driver.execute_script("arguments[0].setAttribute('fill', '" + df_concept_colors["Color"][c] + "')", element)
         st.markdown("Colores Asignados en Nodos")   
 
