@@ -147,10 +147,10 @@ def main_sidebar():
 def site_extraction_page():
 
     #1. Lectura de Archivo
-    uploaded_file = st.file_uploader("Inserta el Excel (.xlsx, .csv) aquí:", type=['xlsx'])
+    uploaded_file = st.file_uploader("Inserta el Excel (.xlsx, .csv) aquí:", type=['csv'])
     
     if uploaded_file is not None:
-        df = pd.read_excel(uploaded_file, sheet_name = None)
+        df = pd.read_csv(uploaded_file)
         st.write(df)
         df["Cantidad Actual"] = df["Cantidad Actual"].astype("string")
         df["Cantidad Pasada"] = df["Cantidad Pasada"].astype("string")
