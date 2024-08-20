@@ -148,8 +148,9 @@ def site_extraction_page():
 
     #1. Lectura de Archivo
     uploaded_file = st.file_uploader("Inserta el Excel (.xlsx, .csv) aquí:", type=['xlsx'])
+    
     if uploaded_file is not None:
-        df = pd.read_csv(uploaded_file)
+        df = pd.read_excel(uploaded_file, sheet_name = None)
         df["Cantidad Actual"] = df["Cantidad Actual"].astype("string")
         df["Cantidad Pasada"] = df["Cantidad Pasada"].astype("string")
         concepto_color_df = pd.DataFrame.from_dict({"Ingreso": "#5666FF", "Costo":"#FF585D", "Utilidad Bruta":"#14E79D", "EBITDA":"#14E79D", "Gasto":"#FFB71A", "Otras Cuentas": "#A5A5A5"}, orient='index', columns = ["Color"]).reset_index().rename(columns = {"index":"Concepto"})
