@@ -34,7 +34,7 @@ def init_driver():
     options.add_argument("--disable-dev-shm-usage")
 
     # Specify the correct path to the Chrome binary
-    chrome_binary_path = "C:/Program Files/Google/Chrome/Application/chrome.exe"  # Update this path if incorrect
+    chrome_binary_path = "./chrome.exe"  # Update this path if incorrect
     options.binary_location = chrome_binary_path
     
     driver = webdriver.Chrome(service=service, options=options)
