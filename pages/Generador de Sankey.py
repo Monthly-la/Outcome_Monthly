@@ -109,15 +109,18 @@ def get_website_content(url, df, df_final, df_concept_colors):
         for c in range(len(nodes_location)):
             element = nodes_location[c].find_element("tag name", "rect")
             driver.execute_script("arguments[0].setAttribute('fill', '" + df_concept_colors["Color"][c] + "')", element)
-            
-        
+        st.markdown("Colores Asignados en Nodos")   
+
+
+
         #Color Paths
         colors_path =  driver.find_elements("tag name", "path")
+        st.markdown("Encontrando Rutas")
         
         paths = []
         for i in colors_path:
             paths.append(i.get_attribute('stroke'))
-            
+        st.markdown("Rutas Encontradas")    
         counter = 0
         index_paths = []
         for x in paths:
@@ -125,12 +128,12 @@ def get_website_content(url, df, df_final, df_concept_colors):
                 index_paths.append(counter)
             counter += 1
         paths_location = colors_path[min(index_paths):max(index_paths)+1]
-        
+        st.markdown("Asignar Colores a Rutas")
         
         for c in range(len(paths_location)):
             element = paths_location[c]
             driver.execute_script("arguments[0].setAttribute('stroke', '" + df_final["Color Ruta"][c] + "')", element)
-            
+        st.markdown("Colores Asignados en Rutas")      
         #Download Sankey
         file_field = driver.find_elements("xpath", "//button[@class='btn dropdown-toggle navbar-item btn-secondary']")
         #print(len(file_field))
