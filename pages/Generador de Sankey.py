@@ -114,7 +114,7 @@ def get_website_content(url, df, df_final, df_concept_colors):
 
 
         #Color Paths
-        colors_path =  driver.find_elements("tag name", "path")
+        colors_path =  driver.find_elements("xpath", "//g//path")
         st.markdown("Encontrando Rutas")
         
         paths = []
