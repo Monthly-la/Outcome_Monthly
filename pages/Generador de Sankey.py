@@ -158,7 +158,6 @@ def get_website_content(url, df, df_final, df_concept_colors):
 # ---------------- Page & UI/UX Components ------------------------
 def main_sidebar():
     # 1.Vertical Menu
-    st.header("Running Selenium on Streamlit Cloud")
     site_extraction_page()
 
 
