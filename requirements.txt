@@ -10,5 +10,5 @@ datetime
 openai
 selenium
 seleniumbase
-webdriver-manager
+webdriver-manager==4.0.2
 undetected-chromedriver
