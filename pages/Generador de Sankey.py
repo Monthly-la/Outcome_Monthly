@@ -58,25 +58,26 @@ def get_website_content(url, df, df_final, df_concept_colors):
             top_rows.append("height: 40px; top: "+ str(i*40) +"px; width: 100%;")
         
         style_cell = ["width: 213.452px; left: 0px;", "width: 213.452px; left: 213.452px;","width: 177.876px; left: 426.903px;", "width: 177.876px; left: 604.78px;"]
-        c_counter = -1
-        for c in style_cell:
-            c_counter += 1
-            r_counter = 0
-            for r in top_rows:
-                st.markdown(r)
-                cell = "//div[@class='dsg-row'][@style='"+ r +"']//div[@class='dsg-cell']"
-                #cell = "//div[@class='dsg-row'][@style='"+ r +"']//div[@class='dsg-cell'][@style='"+ c +"']//input[@class='dsg-input']"
-
-                cell_field = driver.find_elements("xpath", cell)
-                st.markdown(cell_field[0].text)
-                st.markdown(len(cell_field))
+        r_counter = 0
+        
+        for r in top_rows:
+            st.markdown(r)
+            cells = "//div[@class='dsg-row'][@style='"+ r +"']//div[@class='dsg-cell']"
+            #cell = "//div[@class='dsg-row'][@style='"+ r +"']//div[@class='dsg-cell'][@style='"+ c +"']//input[@class='dsg-input']"
+            cells_fields = driver.find_elements("xpath", cells)
+            st.markdown(len(cells_fields))
+            c_counter = 0
+            
+            for cell in cells_fields:
                 #cell_field = WebDriverWait(driver, 2).until(ec.element_to_be_clickable((By.CSS_SELECTOR, cell))).click()
-                ActionChains(driver).click(cell_field[0]).perform()
-                ActionChains(driver).double_click(cell_field[0]).perform()
+                cell_field = cell.find_element("xpath", "//input[@class='dsg-input']")
+                ActionChains(driver).click(cell_field).perform()
+                ActionChains(driver).double_click(cell_field).perform()
                 #cell_field.clear()
                 cell_field.send_keys(df.iloc[r_counter,c_counter])
-                r_counter += 1
+                c_counter += 1
                 time.sleep(0.5)
+            r_counter += 1
         
         #Fix Colors
         color_tab_field = driver.find_element("xpath", "//button[@id='tabs-:r3:--tab-1']")
