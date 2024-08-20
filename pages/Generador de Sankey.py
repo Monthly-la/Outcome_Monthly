@@ -87,10 +87,11 @@ def get_website_content(url, df, df_final, df_concept_colors):
         #Color Nodes
         colors_rect =  driver.find_elements("tag name", "g")
         
+        st.markdown("Encontrando Nodos")
         nodes = []
         for i in colors_rect:
             nodes.append(i.get_attribute('class'))
-        
+        st.markdown("Nodos Encontrados")
         counter = 0
         index_node = []
         for x in nodes:
@@ -98,10 +99,12 @@ def get_website_content(url, df, df_final, df_concept_colors):
                 index_node.append(counter)
             counter += 1
         nodes_location = colors_rect[min(index_node):max(index_node)+1]
-        
+        st.markdown("Asignar Colores a Nodos")
         order = pd.DataFrame(driver.find_element("xpath", "//div[@id = 'chart']").text.split("\n"), columns = ["Concepto"])
+        st.markdown("Uniendo Colores a Nodos")
         df_concept_colors = order.merge(df_concept_colors, on = "Concepto", how = "left")
         df_concept_colors = df_concept_colors.dropna(axis='rows').reset_index().drop(columns = "index")
+        st.markdown("Colores Definidos en Nodos")
         
         for c in range(len(nodes_location)):
             element = nodes_location[c].find_element("tag name", "rect")
