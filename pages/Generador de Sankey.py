@@ -68,7 +68,7 @@ def get_website_content(url, df, df_final, df_concept_colors):
                 st.markdown(cell)
                 cell_field = driver.find_elements("xpath", cell)
                 st.markdown(cell_field)
-                 st.markdown(len(cell_field))
+                st.markdown(len(cell_field))
                 #cell_field = WebDriverWait(driver, 2).until(ec.element_to_be_clickable((By.CSS_SELECTOR, cell))).click()
                 ActionChains(driver).click(cell_field[0]).perform()
                 ActionChains(driver).double_click(cell_field[0]).perform()
