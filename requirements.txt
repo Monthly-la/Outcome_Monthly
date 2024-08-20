@@ -8,3 +8,7 @@ streamlit-option-menu
 plotly
 datetime
 openai
+selenium
+seleniumbase
+webdriver-manager
+undetected-chromedriver
