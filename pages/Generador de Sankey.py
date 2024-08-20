@@ -56,7 +56,6 @@ def get_website_content(url, df, df_final, df_concept_colors):
         top_rows = []
         for i in range(1,rows+1):
             top_rows.append("height: 40px; top: "+ str(i*40) +"px; width: 100%;")
-        top_rows
         
         style_cell = ["width: 213.452px; left: 0px;", "width: 213.452px; left: 213.452px;","width: 177.876px; left: 426.903px;", "width: 177.876px; left: 604.78px;"]
         c_counter = -1
@@ -64,6 +63,7 @@ def get_website_content(url, df, df_final, df_concept_colors):
             c_counter += 1
             r_counter = 0
             for r in top_rows:
+                st.markdown(r)
                 cell = "//div[@class='dsg-row'][@style='"+ r +"']//div[@class='dsg-cell'][@style='"+ c +"']//input[@class='dsg-input']"
                 cell_field = driver.find_elements("xpath", cell)[0]
                 #cell_field = WebDriverWait(driver, 2).until(ec.element_to_be_clickable((By.CSS_SELECTOR, cell))).click()
