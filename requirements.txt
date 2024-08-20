@@ -12,3 +12,4 @@ selenium
 seleniumbase
 webdriver-manager==4.0.2
 undetected-chromedriver
+beautifulsoup4
