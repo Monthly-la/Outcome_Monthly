@@ -59,7 +59,7 @@ def main_sidebar():
 
 
 def site_extraction_page():
-    SAMPLE_URL = "https://spectrum.ieee.org/3d-printed-rocket"
+    SAMPLE_URL = "https://www.sankeyart.com/sankeys/1426/"
     url = st.text_input(label="URL", placeholder="https://example.com", value=SAMPLE_URL)
 
     clicked = st.button("Load Page Content",type="primary")
