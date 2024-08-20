@@ -61,7 +61,7 @@ def get_website_content(url, df, df_final, df_concept_colors):
         r_counter = 0
         
         for r in top_rows:
-            st.markdown("Corriendo: "+str(r_counter+1)+"/"+len(cells_fields))
+            st.markdown("Corriendo: "+str(r_counter+1)+"/"+str(rows))
             cells = "//div[@class='dsg-row'][@style='"+ r +"']//div[@class='dsg-cell']"
             #cell = "//div[@class='dsg-row'][@style='"+ r +"']//div[@class='dsg-cell'][@style='"+ c +"']//input[@class='dsg-input']"
             cells_fields = driver.find_elements("xpath", cells)
