@@ -151,7 +151,7 @@ def site_extraction_page():
     
     if uploaded_file is not None:
         df = pd.read_excel(uploaded_file, sheet_name = None)
-        display(df)
+        st.write(df)
         df["Cantidad Actual"] = df["Cantidad Actual"].astype("string")
         df["Cantidad Pasada"] = df["Cantidad Pasada"].astype("string")
         concepto_color_df = pd.DataFrame.from_dict({"Ingreso": "#5666FF", "Costo":"#FF585D", "Utilidad Bruta":"#14E79D", "EBITDA":"#14E79D", "Gasto":"#FFB71A", "Otras Cuentas": "#A5A5A5"}, orient='index', columns = ["Color"]).reset_index().rename(columns = {"index":"Concepto"})
