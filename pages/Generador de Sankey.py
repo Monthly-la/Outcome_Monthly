@@ -206,7 +206,7 @@ def main_sidebar():
 
 def site_extraction_page():
 
-    input_1, input_2 = columns(2)
+    input_1, input_2 = st.columns(2)
 
     with input_1:
         #1. Lectura de Archivo
