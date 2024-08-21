@@ -202,7 +202,7 @@ def get_website_content(url, df):
         ActionChains(driver).click(file_field[0]).perform()
         download_field = driver.find_element("xpath", "//a[@id='download_link_png']")
         sankey_url = download_field.get_attribute('href')
-        img_data = requests.get(image_url).content
+        img_data = requests.get(sankey_url).content
         
         with open('image_name.jpg', 'wb') as handler:
             handler.write(img_data)
