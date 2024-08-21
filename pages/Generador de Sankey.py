@@ -115,6 +115,10 @@ def get_website_content(url, df):
             cells = "//div[@class='dsg-row'][@style='"+ r +"']//div[@class='dsg-cell']"
             #cell = "//div[@class='dsg-row'][@style='"+ r +"']//div[@class='dsg-cell'][@style='"+ c +"']//input[@class='dsg-input']"
             cells_fields = driver.find_elements("xpath", cells)
+            cells_list = []
+            for i in cells_fields:
+                cells_list.append(i.get_attribute('value'))
+            st.markdown(cells_list)
             c_counter = 0
             
             for cell in cells_fields:
