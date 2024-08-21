@@ -204,7 +204,7 @@ def get_website_content(url, df):
         sankey_url = download_field.get_attribute('href')
         img_data = requests.get(sankey_url).content
         
-        with open('image_name.jpg', 'wb') as handler:
+        with open('Sankey.jpg', 'wb') as handler:
             handler.write(img_data)
         #st.link_button("Descargar Sankey", sankey_url)
         #ActionChains(driver).click(download_field).perform()
