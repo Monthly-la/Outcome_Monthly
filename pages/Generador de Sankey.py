@@ -197,12 +197,15 @@ def get_website_content(url, df):
         #st.markdown("Click al botón de descarga")
 
         driver.quit()
+        return sankey_url
         #soup = BeautifulSoup(html_doc, "html.parser")
     except Exception as e:
         st.write(f"DEBUG:INIT_DRIVER:ERROR:{e}")
+        return sankey_url
     finally:
-        if driver is not None: driver.quit()
-    return sankey_url
+        if driver is not None: 
+            driver.quit()
+        return sankey_url
 
 
 
@@ -229,8 +232,8 @@ def site_extraction_page():
         if clicked:
             with st.container(border=True):
                 with st.spinner("Loading page website..."):
-                    content = get_website_content(url, df)
-                    img_data = requests.get(content).content
+                    sankey = get_website_content(url, df)
+                    img_data = requests.get(sankey).content
                     
                     with open('Sankey.jpg', 'wb') as handler:
                         handler.write(img_data)
