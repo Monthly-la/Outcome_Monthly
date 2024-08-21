@@ -124,7 +124,7 @@ def get_website_content(url, df):
                 ActionChains(driver).double_click(cell_field).perform()
                 #cell_field.clear()
                 cell_field.send_keys(df.iloc[r_counter,c_counter])
-                st.markdown(cell_field)
+                st.markdown(cell_field.text)
                 c_counter += 1
                 time.sleep(0.5)
 
