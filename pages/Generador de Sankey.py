@@ -10,6 +10,8 @@ from selenium.webdriver.support import expected_conditions as ec
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.action_chains import ActionChains
+import requests
+
 
 #https://github.com/S0NM/selenium-demo/tree/main
 st.set_page_config(
@@ -200,9 +202,14 @@ def get_website_content(url, df):
         ActionChains(driver).click(file_field[0]).perform()
         download_field = driver.find_element("xpath", "//a[@id='download_link_png']")
         sankey_url = download_field.get_attribute('href')
-        st.link_button("Descargar Sankey", sankey_url)
-        ActionChains(driver).click(download_field).perform()
-        st.markdown("Click al botón de descarga")
+        img_data = requests.get(image_url).content
+        
+        with open('image_name.jpg', 'wb') as handler:
+            handler.write(img_data)
+        #st.link_button("Descargar Sankey", sankey_url)
+        #ActionChains(driver).click(download_field).perform()
+        
+        #st.markdown("Click al botón de descarga")
 
         driver.quit()
         #soup = BeautifulSoup(html_doc, "html.parser")
