@@ -212,7 +212,7 @@ def site_extraction_page():
     
     st.download_button(
         label = "Descargar template 📥",
-        data = template_sankey_df,
+        data = ['Origen', 'Destino', 'Cantidad Actual', 'Cantidad Pasada'],
         file_name = "Template_Sankey.csv",
         mime = "text/csv",
     )
