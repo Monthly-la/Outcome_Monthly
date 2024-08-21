@@ -206,7 +206,7 @@ def main_sidebar():
 
 def site_extraction_page():
 
-    input_1, input_2 = st.columns(2)
+    input_1, input_2,  input_3 = st.columns(3)
 
     with input_1:
         #1. Lectura de Archivo
@@ -226,8 +226,6 @@ def site_extraction_page():
         uploaded_file = st.file_uploader("Inserta el Excel (.xlsx, .csv) aquí:", type=['csv'])
     
     if uploaded_file is not None:
-        column_1, column_2 = st.columns(2)
-        with column_1:
             df = pd.read_csv(uploaded_file)
             df["Cantidad Actual"] = df["Cantidad Actual"].astype("string")
             df["Cantidad Pasada"] = df["Cantidad Pasada"].astype("string")
@@ -235,7 +233,7 @@ def site_extraction_page():
             url = "https://www.sankeyart.com/sankeys/1426/"
             clicked = st.button("Generar Sankey 🎋",type="primary")
         
-        with column_2:
+        with input_3:
             if clicked:
                 with st.container(border=True):
                     with st.spinner("Loading page website..."):
