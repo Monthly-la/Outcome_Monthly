@@ -110,7 +110,7 @@ def get_website_content(url, df, df_final, df_concept_colors):
             st.markdown(nodes_location[c])
             element = nodes_location[c].find_element("tag name", "rect")
             st.markdown(element)
-            st.markdown(element.text)
+            st.markdown(element.get_attribute('fill'))
             driver.execute_script("arguments[0].setAttribute('fill', '" + df_concept_colors["Color"][c] + "')", element)
   
 
