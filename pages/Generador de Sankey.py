@@ -221,6 +221,7 @@ def site_extraction_page():
         
         df_concept_colors = pd.concat([df_concept_origen_colors, df_concept_destino_colors]).drop_duplicates()
         df_concept_colors = conceptos_origen_destino_df.merge(df_concept_colors, on = "Concepto", how = "inner")
+        st.write(df_concept_colors)
     
         
         url = "https://www.sankeyart.com/sankeys/1426/"
