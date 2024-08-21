@@ -120,12 +120,12 @@ def get_website_content(url, df):
             for cell in cells_fields:
                 #cell_field = WebDriverWait(driver, 2).until(ec.element_to_be_clickable((By.CSS_SELECTOR, cell))).click()
                 cell_field = cell.find_element("xpath", "//input[@class='dsg-input']")
+                st.markdown("Celda 1:" + str(cell_field.get_attribute('value')))
                 ActionChains(driver).click(cell_field).perform()
                 ActionChains(driver).double_click(cell_field).perform()
                 #cell_field.clear()
-                st.markdown("Celda 1:" + str(cell_field.text))
                 cell_field.send_keys(df.iloc[r_counter,c_counter])
-                st.markdown("Celda 2:" + str(cell_field.text))
+                st.markdown("Celda 2:" + str(cell_field.get_attribute('value')))
                 c_counter += 1
                 time.sleep(0.5)
 
