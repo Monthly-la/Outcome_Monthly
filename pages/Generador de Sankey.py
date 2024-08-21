@@ -33,7 +33,6 @@ st.divider()
 def get_website_content(url, df, df_final, df_concept_colors):
     driver = None
     try:
-        print(df_concept_colors)
         # Using on Local
         options = webdriver.ChromeOptions()
         options.add_argument('--headless')
@@ -103,8 +102,10 @@ def get_website_content(url, df, df_final, df_concept_colors):
         st.markdown("Asignar Colores a Nodos")
         order = pd.DataFrame(driver.find_element("xpath", "//div[@id = 'chart']").text.split("\n"), columns = ["Concepto"])
         st.markdown("Uniendo Colores a Nodos")
+        st.markdown(df_concept_colors["Color"][0])
         df_concept_colors = order.merge(df_concept_colors, on = "Concepto", how = "left")
         df_concept_colors = df_concept_colors.dropna(axis='rows').reset_index().drop(columns = "index")
+        st.markdown(df_concept_colors["Color"][0])
         st.markdown("Colores Definidos en Nodos")
         
         for c in range(len(nodes_location)):
@@ -112,8 +113,6 @@ def get_website_content(url, df, df_final, df_concept_colors):
             element = nodes_location[c].find_element("tag name", "rect")
             st.markdown(element)
             st.markdown(element.get_attribute('fill'))
-            st.markdown(df_concept_colors["Color"][c])
-            st.write(f"DEBUG:DRIVER:{driver}")
             driver.execute_script("arguments[0].setAttribute('fill', '" + df_concept_colors["Color"][c] + "')", element)
   
 
