@@ -110,31 +110,21 @@ def get_website_content(url, df):
         style_cell = ["width: 213.452px; left: 0px;", "width: 213.452px; left: 213.452px;","width: 177.876px; left: 426.903px;", "width: 177.876px; left: 604.78px;"]
         r_counter = 0
         
+        r_counter = 0
         for r in top_rows:
-            st.markdown("Corriendo: "+str(r_counter+1)+"/"+str(rows))
-            cells = "//div[@class='dsg-row'][@style='"+ r +"']//div[@class='dsg-cell']"
-            #cell = "//div[@class='dsg-row'][@style='"+ r +"']//div[@class='dsg-cell'][@style='"+ c +"']//input[@class='dsg-input']"
+            cells = "//div[@class='dsg-row'][@style='"+ r +"']//div[@class='dsg-cell']//input[@class='dsg-input']"
             cells_fields = driver.find_elements("xpath", cells)
-            cells_list = []
-            for i in cells_fields:
-                cells_list.append(i.get_attribute('value'))
-            st.markdown(cells_list)
+        
             c_counter = 0
-            
-            for cell in cells_fields:
-                #cell_field = WebDriverWait(driver, 2).until(ec.element_to_be_clickable((By.CSS_SELECTOR, cell))).click()
-                cell_field = cell.find_element("xpath", "//input[@class='dsg-input']")
-                st.markdown("Celda 1:" + str(cell_field.get_attribute('value')))
-                ActionChains(driver).click(cell_field).perform()
-                ActionChains(driver).double_click(cell_field).perform()
+            for c in cells_fields:
+                ActionChains(driver).click(c).perform()
+                ActionChains(driver).double_click(c).perform()
                 #cell_field.clear()
-                cell_field.send_keys(df.iloc[r_counter,c_counter])
-                st.markdown("Celda 2:" + str(cell_field.get_attribute('value')))
+                c.send_keys(df.iloc[r_counter,c_counter])
                 c_counter += 1
                 time.sleep(0.5)
-
-
             r_counter += 1
+    
         
         #Fix Colors
         st.markdown("Datos Completos")
