@@ -123,9 +123,13 @@ def get_website_content(url, df):
                 ActionChains(driver).click(cell_field).perform()
                 ActionChains(driver).double_click(cell_field).perform()
                 #cell_field.clear()
+                st.markdown(cell_field.text)
                 cell_field.send_keys(df.iloc[r_counter,c_counter])
                 c_counter += 1
                 time.sleep(0.5)
+                st.markdown(df.iloc[r_counter,c_counter])
+                st.markdown(cell_field.text)
+
             r_counter += 1
         
         #Fix Colors
