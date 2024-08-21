@@ -78,8 +78,8 @@ def get_website_content(url, df):
     
     df_concept_colors = pd.concat([df_concept_origen_colors, df_concept_destino_colors]).drop_duplicates()
     df_concept_colors = conceptos_origen_destino_df.merge(df_concept_colors, on = "Concepto", how = "inner")
-    st.subheader(str(list(df_concept_colors["Color"]))
-    st.markdown(str(list(df_concept_colors["Color"]))
+    st.subheader(str(list(df_concept_colors["Color"])))
+    st.markdown(str(list(df_concept_colors["Color"])))
 
     
     try:
