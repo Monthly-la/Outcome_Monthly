@@ -87,7 +87,7 @@ def get_website_content(url, df, df_final, df_concept_colors):
         #Color Nodes
         colors_rect =  driver.find_elements("tag name", "g")
         
-        st.markdown("Encontrando "+ str(len(colors_rect) +"Nodos")
+        st.markdown("Encontrando "+ str(len(colors_rect)) +"Nodos")
         nodes = []
         for i in colors_rect:
             nodes.append(i.get_attribute('class'))
