@@ -177,10 +177,11 @@ def get_website_content(url, df):
         ActionChains(driver).click(file_field[0]).perform()
         download_field = driver.find_element("xpath", "//a[@id='download_link_png']")
         sankey_url = download_field.get_attribute('href')
+
+        st.markdown("Copia el URL del Sankey 👇: ")
         st.image(sankey_url, use_column_width = "always")
         Path = f'''{sankey_url}'''
         st.code(Path, language="python")
-        st.markdown("Copia el URL del Sankey")
         #ActionChains(driver).click(download_field).perform()
         
         #st.markdown("Click al botón de descarga")
@@ -233,7 +234,9 @@ def site_extraction_page():
 
     with input_3:
             url = "https://www.sankeyart.com/sankeys/1426/"
-            clicked = st.button("Generar Sankey 🎋",type="primary")
+            st.markdown("<h2 style='text-align: left; color: #14E79D; font-weight: bolder;'>PASO 👌</h2>"+"<p style='text-align: left; color: #5666FF; font-weight: bold;'>Genera el diagrama Sankey: </p>", unsafe_allow_html=True)
+
+            clicked = st.button("Generar 🎋",type="primary")
             if clicked:
                 with st.container(border=True):
                     with st.spinner("Loading page website..."):
