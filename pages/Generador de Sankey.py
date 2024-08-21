@@ -87,7 +87,7 @@ def get_website_content(url, df, df_final, df_concept_colors):
         #Color Nodes
         colors_rect =  driver.find_elements("tag name", "g")
         
-        st.markdown("Encontrando "+ str(len(colors_rect)) +"Nodos")
+        st.markdown("Encontrando "+ str(len(colors_rect)) +" Nodos")
         nodes = []
         for i in colors_rect:
             nodes.append(i.get_attribute('class'))
@@ -111,6 +111,8 @@ def get_website_content(url, df, df_final, df_concept_colors):
             element = nodes_location[c].find_element("tag name", "rect")
             st.markdown(element)
             st.markdown(element.get_attribute('fill'))
+            st.markdown(df_concept_colors["Color"][c])
+            st.write(f"DEBUG:DRIVER:{driver}")
             driver.execute_script("arguments[0].setAttribute('fill', '" + df_concept_colors["Color"][c] + "')", element)
   
 
