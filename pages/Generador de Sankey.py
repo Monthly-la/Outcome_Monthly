@@ -199,18 +199,18 @@ def get_website_content(url, df):
         st.markdown("Buscando Boton de Descarga") 
         ActionChains(driver).click(file_field[0]).perform()
         download_field = driver.find_element("xpath", "//a[@id='download_link_png']")
-        st.markdown(download_field.get_attribute('href'))
+        sankey_url = download_field.get_attribute('href')
         ActionChains(driver).click(download_field).perform()
         st.markdown("Click al botón de descarga")
 
         driver.quit()
         #soup = BeautifulSoup(html_doc, "html.parser")
-        #return soup.get_text()
+
     except Exception as e:
         st.write(f"DEBUG:INIT_DRIVER:ERROR:{e}")
     finally:
         if driver is not None: driver.quit()
-    return None
+    return sankey_url
 
 
 
@@ -238,7 +238,12 @@ def site_extraction_page():
             with st.container(border=True):
                 with st.spinner("Loading page website..."):
                     content = get_website_content(url, df)
-                    #st.write(content)
+                    st.download_button(
+                        label="Descargar Sankey",
+                        data = content,
+                        file_name="Sankey.png",
+                        mime="png",
+                    )
 
 
 if __name__ == "__main__":
