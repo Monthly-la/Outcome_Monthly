@@ -238,12 +238,9 @@ def site_extraction_page():
             with st.container(border=True):
                 with st.spinner("Loading page website..."):
                     content = get_website_content(url, df)
-                    st.download_button(
-                        label="Descargar Sankey",
-                        data = content,
-                        file_name="Sankey.png",
-                        mime="png",
-                    )
+
+                    st.link_button("Descargar Sankey", content)
+
 
 
 if __name__ == "__main__":
