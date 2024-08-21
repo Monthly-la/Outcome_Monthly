@@ -106,24 +106,13 @@ def get_website_content(url, df, df_final, df_concept_colors):
         df_concept_colors = df_concept_colors.dropna(axis='rows').reset_index().drop(columns = "index")
         st.markdown("Colores Definidos en Nodos")
         
-        #for c in range(len(nodes_location)):
-            #st.markdown(nodes_location[c])
-            #element = nodes_location[c].find_element("tag name", "rect")
-            #st.markdown(element)
-            #driver.execute_script("arguments[0].setAttribute('fill', '" + df_concept_colors["Color"][c] + "')", element)
         for c in range(len(nodes_location)):
             st.markdown(nodes_location[c])
             element = nodes_location[c].find_element("tag name", "rect")
             st.markdown(element)
-            
-            color = df_concept_colors["Color"][c]
-            st.write(f"Setting color for node {c}: {color}")
-            
-            js_code = f"arguments[0].setAttribute('fill', '{color}')"
-            st.write(f"Executing JS: {js_code}")
-            
-            driver.execute_script(js_code, element)
-            st.markdown("Colores Asignados en Nodos")   
+            st.markdown(element.text)
+            driver.execute_script("arguments[0].setAttribute('fill', '" + df_concept_colors["Color"][c] + "')", element)
+  
 
 
 
