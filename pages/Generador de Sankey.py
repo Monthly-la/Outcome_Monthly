@@ -156,7 +156,6 @@ def get_website_content(url, df):
         st.markdown("Colores Definidos en Nodos")
         
         for c in range(len(nodes_location)):
-            st.markdown(nodes_location[c])
             element = nodes_location[c].find_element("tag name", "rect")
             driver.execute_script("arguments[0].setAttribute('fill', '" + df_concept_colors["Color"][c] + "')", element)
   
@@ -190,7 +189,7 @@ def get_website_content(url, df):
         ActionChains(driver).click(file_field[0]).perform()
         download_field = driver.find_element("xpath", "//a[@id='download_link_png']")
         sankey_url = download_field.get_attribute('href')
-        
+        st.image(sankey_url, use_column_width = "always")
         st.link_button("Descargar Sankey", sankey_url)
         #ActionChains(driver).click(download_field).perform()
         
