@@ -112,6 +112,7 @@ def get_website_content(url, df):
         
         r_counter = 0
         for r in top_rows:
+            st.markdown("Completando: " + str(r_counter + 1) + " / " + str(len(top_rows)))
             cells = "//div[@class='dsg-row'][@style='"+ r +"']//div[@class='dsg-cell']//input[@class='dsg-input']"
             cells_fields = driver.find_elements("xpath", cells)
         
