@@ -78,8 +78,6 @@ def get_website_content(url, df):
     
     df_concept_colors = pd.concat([df_concept_origen_colors, df_concept_destino_colors]).drop_duplicates()
     df_concept_colors = conceptos_origen_destino_df.merge(df_concept_colors, on = "Concepto", how = "inner")
-    st.subheader(str(list(df_concept_colors["Color"])))
-    st.markdown(str(list(df_concept_colors["Color"])))
 
     
     try:
@@ -198,9 +196,11 @@ def get_website_content(url, df):
         file_field = driver.find_elements("xpath", "//button[@class='btn dropdown-toggle navbar-item btn-secondary']")
         #print(len(file_field))
         #print(file_field[0].text)
+        st.markdown("Buscando Boton de Descarga") 
         ActionChains(driver).click(file_field[0]).perform()
         download_field = driver.find_element("xpath", "//a[@id='download_link_png']")
         ActionChains(driver).click(download_field).perform()
+        st.markdown("Click al botón de descarga") 
 
         driver.quit()
         #soup = BeautifulSoup(html_doc, "html.parser")
