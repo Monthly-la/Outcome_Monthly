@@ -207,6 +207,8 @@ def main_sidebar():
 def site_extraction_page():
 
     #1. Lectura de Archivo
+    st.markdown("<h2 style='text-align: center; color: #14E79D; font-weight: bolder;'>PASO ☝️</h2>"+"<p style='text-align: center; color: #5666FF; font-weight: bold;'>Subir archivo: </p>", unsafe_allow_html=True)
+    st.markdown("")
     uploaded_file = st.file_uploader("Inserta el Excel (.xlsx, .csv) aquí:", type=['csv'])
     
     if uploaded_file is not None:
