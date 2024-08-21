@@ -128,19 +128,15 @@ def get_website_content(url, df):
     
         
         #Fix Colors
-        st.markdown("Datos Completos")
         color_tab_field = driver.find_element("xpath", "//button[@id='tabs-:r3:--tab-1']")
         ActionChains(driver).click(color_tab_field).perform()
-        st.markdown("Definiendo Colores")
         
         #Color Nodes
         colors_rect =  driver.find_elements("tag name", "g")
         
-        st.markdown("Encontrando "+ str(len(colors_rect)) +" Nodos")
         nodes = []
         for i in colors_rect:
             nodes.append(i.get_attribute('class'))
-        st.markdown("Nodos Encontrados")
         counter = 0
         index_node = []
         for x in nodes:
@@ -148,12 +144,9 @@ def get_website_content(url, df):
                 index_node.append(counter)
             counter += 1
         nodes_location = colors_rect[min(index_node):max(index_node)+1]
-        st.markdown("Asignar Colores a Nodos")
         order = pd.DataFrame(driver.find_element("xpath", "//div[@id = 'chart']").text.split("\n"), columns = ["Concepto"])
-        st.markdown("Uniendo Colores a Nodos")
         df_concept_colors = order.merge(df_concept_colors, on = "Concepto", how = "left")
         df_concept_colors = df_concept_colors.dropna(axis='rows').reset_index().drop(columns = "index")
-        st.markdown("Colores Definidos en Nodos")
         
         for c in range(len(nodes_location)):
             element = nodes_location[c].find_element("tag name", "rect")
@@ -162,12 +155,10 @@ def get_website_content(url, df):
 
         #Color Paths
         colors_path =  driver.find_elements("tag name", "path")
-        st.markdown("Encontrando Rutas")
         
         paths = []
         for i in colors_path:
             paths.append(i.get_attribute('stroke'))
-        st.markdown("Rutas Encontradas")    
         counter = 0
         index_paths = []
         for x in paths:
@@ -175,22 +166,18 @@ def get_website_content(url, df):
                 index_paths.append(counter)
             counter += 1
         paths_location = colors_path[min(index_paths):max(index_paths)+1]
-        st.markdown("Asignar Colores a Rutas")
         
         for c in range(len(paths_location)):
             element = paths_location[c]
             driver.execute_script("arguments[0].setAttribute('stroke', '" + df_final["Color Ruta"][c] + "')", element)
-        st.markdown("Colores Asignados en Rutas")      
         #Download Sankey
         file_field = driver.find_elements("xpath", "//button[@class='btn dropdown-toggle navbar-item btn-secondary']")
         #print(len(file_field))
         #print(file_field[0].text)
-        st.markdown("Buscando Boton de Descarga") 
         ActionChains(driver).click(file_field[0]).perform()
         download_field = driver.find_element("xpath", "//a[@id='download_link_png']")
         sankey_url = download_field.get_attribute('href')
         st.image(sankey_url, use_column_width = "always")
-        st.link_button("Descargar Sankey", sankey_url)
         #ActionChains(driver).click(download_field).perform()
         
         #st.markdown("Click al botón de descarga")
