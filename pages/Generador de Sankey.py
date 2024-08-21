@@ -152,10 +152,10 @@ def get_website_content(url, df):
         st.markdown("Asignar Colores a Nodos")
         order = pd.DataFrame(driver.find_element("xpath", "//div[@id = 'chart']").text.split("\n"), columns = ["Concepto"])
         st.markdown("Uniendo Colores a Nodos")
-        st.markdown("Prueba: " + str(df_concept_colors["Color"][0]))
+        st.markdown("Prueba 1: " + str(df_concept_colors["Color"][0]))
         df_concept_colors = order.merge(df_concept_colors, on = "Concepto", how = "left")
         df_concept_colors = df_concept_colors.dropna(axis='rows').reset_index().drop(columns = "index")
-        st.markdown("Prueba: " + str(df_concept_colors["Color"][0]))
+        st.markdown("Prueba 2: " + str(df_concept_colors["Color"][0]))
         st.markdown("Colores Definidos en Nodos")
         
         for c in range(len(nodes_location)):
@@ -163,7 +163,7 @@ def get_website_content(url, df):
             element = nodes_location[c].find_element("tag name", "rect")
             st.markdown(element)
             st.markdown(element.get_attribute('fill'))
-            st.markdown("Prueba: " + str(df_concept_colors["Color"][c]))
+            st.markdown("Prueba 3: " + str(df_concept_colors["Color"][c]))
             st.markdown("Hola")
             driver.execute_script("arguments[0].setAttribute('fill', '" + df_concept_colors["Color"][c] + "')", element)
   
