@@ -141,7 +141,6 @@ def get_website_content(url, df):
         for i in colors_rect:
             nodes.append(i.get_attribute('class'))
         st.markdown("Nodos Encontrados")
-        st.markdown(str(nodes))
         counter = 0
         index_node = []
         for x in nodes:
@@ -151,27 +150,16 @@ def get_website_content(url, df):
         nodes_location = colors_rect[min(index_node):max(index_node)+1]
         st.markdown("Asignar Colores a Nodos")
         order = pd.DataFrame(driver.find_element("xpath", "//div[@id = 'chart']").text.split("\n"), columns = ["Concepto"])
-        st.write(order)
-        st.markdown(order)
         st.markdown("Uniendo Colores a Nodos")
-        st.markdown("Prueba 1: " + str(df_concept_colors["Color"][0]))
         df_concept_colors = order.merge(df_concept_colors, on = "Concepto", how = "left")
-        st.markdown("Prueba 2: " + str(df_concept_colors["Color"][0]))
         df_concept_colors = df_concept_colors.dropna(axis='rows').reset_index().drop(columns = "index")
-        st.markdown("Prueba 3: " + str(df_concept_colors["Color"][0]))
         st.markdown("Colores Definidos en Nodos")
         
         for c in range(len(nodes_location)):
             st.markdown(nodes_location[c])
             element = nodes_location[c].find_element("tag name", "rect")
-            st.markdown(element)
-            st.markdown(element.get_attribute('fill'))
-            st.markdown("Prueba 4: " + str(df_concept_colors["Color"][c]))
-            st.markdown("Hola")
             driver.execute_script("arguments[0].setAttribute('fill', '" + df_concept_colors["Color"][c] + "')", element)
   
-
-
 
         #Color Paths
         colors_path =  driver.find_elements("tag name", "path")
@@ -202,10 +190,7 @@ def get_website_content(url, df):
         ActionChains(driver).click(file_field[0]).perform()
         download_field = driver.find_element("xpath", "//a[@id='download_link_png']")
         sankey_url = download_field.get_attribute('href')
-        img_data = requests.get(sankey_url).content
-        
-        with open('Sankey.jpg', 'wb') as handler:
-            handler.write(img_data)
+    
         #st.link_button("Descargar Sankey", sankey_url)
         #ActionChains(driver).click(download_field).perform()
         
@@ -245,6 +230,10 @@ def site_extraction_page():
             with st.container(border=True):
                 with st.spinner("Loading page website..."):
                     content = get_website_content(url, df)
+                    img_data = requests.get(content).content
+                    
+                    with open('Sankey.jpg', 'wb') as handler:
+                        handler.write(img_data)
 
 
 
