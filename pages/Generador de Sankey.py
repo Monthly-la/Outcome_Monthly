@@ -33,7 +33,7 @@ st.divider()
 def get_website_content(url, df, df_final, df_concept_colors):
     driver = None
     try:
-        st.write(df_concept_colors)
+        print(df_concept_colors)
         # Using on Local
         options = webdriver.ChromeOptions()
         options.add_argument('--headless')
