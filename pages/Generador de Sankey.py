@@ -210,17 +210,21 @@ def site_extraction_page():
     uploaded_file = st.file_uploader("Inserta el Excel (.xlsx, .csv) aquí:", type=['csv'])
     
     if uploaded_file is not None:
-        df = pd.read_csv(uploaded_file)
-        st.write(df)
-        df["Cantidad Actual"] = df["Cantidad Actual"].astype("string")
-        df["Cantidad Pasada"] = df["Cantidad Pasada"].astype("string")
+        column_1, columns_2 = st.columns(2)
+        with column_1:
+            df = pd.read_csv(uploaded_file)
+            st.write(df)
+            df["Cantidad Actual"] = df["Cantidad Actual"].astype("string")
+            df["Cantidad Pasada"] = df["Cantidad Pasada"].astype("string")
+            
+            url = "https://www.sankeyart.com/sankeys/1426/"
+            clicked = st.button("Load Page Content",type="primary")
         
-        url = "https://www.sankeyart.com/sankeys/1426/"
-        clicked = st.button("Load Page Content",type="primary")
-        if clicked:
-            with st.container(border=True):
-                with st.spinner("Loading page website..."):
-                    content = get_website_content(url, df)
+        with column_2:
+            if clicked:
+                with st.container(border=True):
+                    with st.spinner("Loading page website..."):
+                        content = get_website_content(url, df)
 
 
 
