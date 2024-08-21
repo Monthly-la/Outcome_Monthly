@@ -207,7 +207,7 @@ def main_sidebar():
 
 def site_extraction_page():
 
-    input_1, input_2,  input_3 = st.columns(3)
+    input_1, padding_A, input_2, padding_B,  input_3 = st.columns([5,1,5,1,5])
 
     with input_1:
         #1. Lectura de Archivo
