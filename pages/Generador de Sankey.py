@@ -229,7 +229,7 @@ def site_extraction_page():
             df["Cantidad Pasada"] = df["Cantidad Pasada"].astype("string")
             st.write(df)
             url = "https://www.sankeyart.com/sankeys/1426/"
-            clicked = st.button("Load Page Content",type="primary")
+            clicked = st.button("Generar Sankey 🎋",type="primary")
         
         with column_2:
             if clicked:
