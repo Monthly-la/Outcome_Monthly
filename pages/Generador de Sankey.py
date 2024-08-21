@@ -205,12 +205,11 @@ def get_website_content(url, df):
 
         driver.quit()
         #soup = BeautifulSoup(html_doc, "html.parser")
-
+    return sankey_url
     except Exception as e:
         st.write(f"DEBUG:INIT_DRIVER:ERROR:{e}")
     finally:
         if driver is not None: driver.quit()
-    return sankey_url
 
 
 
@@ -238,7 +237,6 @@ def site_extraction_page():
             with st.container(border=True):
                 with st.spinner("Loading page website..."):
                     content = get_website_content(url, df)
-
                     st.link_button("Descargar Sankey", content)
 
 
