@@ -177,8 +177,8 @@ def get_website_content(url, df):
         ActionChains(driver).click(file_field[0]).perform()
         download_field = driver.find_element("xpath", "//a[@id='download_link_png']")
         sankey_url = download_field.get_attribute('href')
-
-        st.markdown("Copia el URL del Sankey 👇: ")
+        st.markdown("")
+        st.subheader("Copia el URL del Sankey 👇: ")
         st.image(sankey_url, use_column_width = "always")
         Path = f'''{sankey_url}'''
         st.code(Path, language="python")
