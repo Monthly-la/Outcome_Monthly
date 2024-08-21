@@ -151,6 +151,8 @@ def get_website_content(url, df):
         nodes_location = colors_rect[min(index_node):max(index_node)+1]
         st.markdown("Asignar Colores a Nodos")
         order = pd.DataFrame(driver.find_element("xpath", "//div[@id = 'chart']").text.split("\n"), columns = ["Concepto"])
+        st.write(order)
+        st.markdown(order)
         st.markdown("Uniendo Colores a Nodos")
         st.markdown("Prueba 1: " + str(df_concept_colors["Color"][0]))
         df_concept_colors = order.merge(df_concept_colors, on = "Concepto", how = "left")
