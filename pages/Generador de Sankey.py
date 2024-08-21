@@ -30,8 +30,56 @@ with header_logo_2:
 st.divider()
 
 
-def get_website_content(url, df, df_final, df_concept_colors):
+def get_website_content(url, df):
     driver = None
+    
+    concepto_color_df = pd.DataFrame.from_dict({"Ingreso": "#5666FF", "Costo":"#FF585D", "Utilidad Bruta":"#14E79D", "EBITDA":"#14E79D", "Gasto":"#FFB71A", "Otras Cuentas": "#A5A5A5"}, orient='index', columns = ["Color"]).reset_index().rename(columns = {"index":"Concepto"})
+    ruta_color_df = pd.DataFrame.from_dict({"#5666FF":"#B3BAFF", "#FF585D":"#FFB4B6", "#14E79D":"#C1F8E0", "#FFB71A":"#FFDF99", "#A5A5A5":"#D6D6D6"}, orient='index', columns = ["Color Ruta"]).reset_index().rename(columns = {"index":"Color Destino"})
+    
+    df_final = df.merge(concepto_color_df, left_on = "Destino", right_on = "Concepto", how = "left").rename(columns = {"Color":"Color Destino", "Concepto":"Concepto Destino"})
+    df_final = df_final.merge(concepto_color_df, left_on = "Origen", right_on = "Concepto", how = "left").rename(columns = {"Color":"Color Origen", "Concepto":"Concepto Origen"})
+    df_final = df_final.drop(columns = ["Concepto Origen", "Concepto Destino"])
+    df_final['Color Origen'] = df_final['Color Origen'].fillna(df_final['Color Destino'])
+    df_final['Color Destino'] = df_final['Color Destino'].fillna(df_final['Color Origen'])
+    df_final = df_final.merge(ruta_color_df, on = "Color Destino", how = "left")
+    df_final["Cantidad Actual"] = df_final["Cantidad Actual"].astype(int)
+    df_final["Cantidad Pasada"] = df_final["Cantidad Pasada"].astype(int)
+    
+    df_final = df_final[["Origen", "Destino", "Cantidad Actual", "Cantidad Pasada", "Color Origen", "Color Ruta", "Color Destino"]]
+    
+    df_path_order_origen = df_final.groupby(by = "Origen").sum().reset_index()[["Origen", "Cantidad Actual"]].rename(columns = {"Origen":"Concepto", "Cantidad Actual":"Cantidad Origen"})
+    df_path_order_destino = df_final.groupby(by = "Destino").sum().reset_index()[["Destino", "Cantidad Actual"]].rename(columns = {"Destino":"Concepto", "Cantidad Actual":"Cantidad Destino"})
+    df_path_max= df_path_order_origen.merge(df_path_order_destino, on = "Concepto", how = "outer")
+    df_path_max = df_path_max.fillna(0)
+    df_path_max["Max"] = df_path_max[["Cantidad Origen", "Cantidad Destino"]].max(axis=1).astype(int)
+    df_path_max = df_path_max[["Concepto", "Max"]]
+    
+    df_final["Cantidad Origen"] = df_final.merge(df_path_max, left_on = "Origen", right_on = "Concepto", how = "left")["Max"]
+    df_final["Cantidad Destino"] = df_final.merge(df_path_max, left_on = "Destino", right_on = "Concepto", how = "left")["Max"]
+    df_final["Min"] = df_final[["Cantidad Origen", "Cantidad Destino", "Cantidad Actual"]].min(axis=1).astype(int)
+    df_final["Max"] = df_final[["Cantidad Origen", "Cantidad Destino", "Cantidad Actual"]].max(axis=1).astype(int)
+    df_final = df_final.sort_values(by = ["Min", "Max", "Cantidad Origen", "Cantidad Destino", "Cantidad Actual"], ascending=[False, False, False, False, False]).reset_index().drop(columns = "index")
+
+    #2. Generar Complementos de Tabla Original
+    conceptos_origen_destino = []
+
+    for i in range(len(df_final)):
+        if df_final["Origen"][i] not in conceptos_origen_destino:
+            conceptos_origen_destino.append(df_final["Origen"][i])
+        
+        if df_final["Destino"][i] not in conceptos_origen_destino:
+            conceptos_origen_destino.append(df_final["Destino"][i])    
+
+    #3. Tabla de Colores por Concepto de Sankey
+    conceptos_origen_destino_df = pd.DataFrame(conceptos_origen_destino, columns = ["Concepto"])
+    
+    df_concept_origen_colors = df_final[["Origen", "Color Origen"]][df_final["Origen"].isin(conceptos_origen_destino)].drop_duplicates().rename(columns = {"Origen":"Concepto", "Color Origen":"Color"})
+    df_concept_destino_colors = df_final[["Destino", "Color Destino"]][df_final["Destino"].isin(conceptos_origen_destino)].drop_duplicates().rename(columns = {"Destino":"Concepto", "Color Destino":"Color"})
+    
+    df_concept_colors = pd.concat([df_concept_origen_colors, df_concept_destino_colors]).drop_duplicates()
+    df_concept_colors = conceptos_origen_destino_df.merge(df_concept_colors, on = "Concepto", how = "inner")
+
+    
     try:
         # Using on Local
         options = webdriver.ChromeOptions()
@@ -175,60 +223,13 @@ def site_extraction_page():
         st.write(df)
         df["Cantidad Actual"] = df["Cantidad Actual"].astype("string")
         df["Cantidad Pasada"] = df["Cantidad Pasada"].astype("string")
-        concepto_color_df = pd.DataFrame.from_dict({"Ingreso": "#5666FF", "Costo":"#FF585D", "Utilidad Bruta":"#14E79D", "EBITDA":"#14E79D", "Gasto":"#FFB71A", "Otras Cuentas": "#A5A5A5"}, orient='index', columns = ["Color"]).reset_index().rename(columns = {"index":"Concepto"})
-        ruta_color_df = pd.DataFrame.from_dict({"#5666FF":"#B3BAFF", "#FF585D":"#FFB4B6", "#14E79D":"#C1F8E0", "#FFB71A":"#FFDF99", "#A5A5A5":"#D6D6D6"}, orient='index', columns = ["Color Ruta"]).reset_index().rename(columns = {"index":"Color Destino"})
-        
-        df_final = df.merge(concepto_color_df, left_on = "Destino", right_on = "Concepto", how = "left").rename(columns = {"Color":"Color Destino", "Concepto":"Concepto Destino"})
-        df_final = df_final.merge(concepto_color_df, left_on = "Origen", right_on = "Concepto", how = "left").rename(columns = {"Color":"Color Origen", "Concepto":"Concepto Origen"})
-        df_final = df_final.drop(columns = ["Concepto Origen", "Concepto Destino"])
-        df_final['Color Origen'] = df_final['Color Origen'].fillna(df_final['Color Destino'])
-        df_final['Color Destino'] = df_final['Color Destino'].fillna(df_final['Color Origen'])
-        df_final = df_final.merge(ruta_color_df, on = "Color Destino", how = "left")
-        df_final["Cantidad Actual"] = df_final["Cantidad Actual"].astype(int)
-        df_final["Cantidad Pasada"] = df_final["Cantidad Pasada"].astype(int)
-        
-        df_final = df_final[["Origen", "Destino", "Cantidad Actual", "Cantidad Pasada", "Color Origen", "Color Ruta", "Color Destino"]]
-        
-        df_path_order_origen = df_final.groupby(by = "Origen").sum().reset_index()[["Origen", "Cantidad Actual"]].rename(columns = {"Origen":"Concepto", "Cantidad Actual":"Cantidad Origen"})
-        df_path_order_destino = df_final.groupby(by = "Destino").sum().reset_index()[["Destino", "Cantidad Actual"]].rename(columns = {"Destino":"Concepto", "Cantidad Actual":"Cantidad Destino"})
-        df_path_max= df_path_order_origen.merge(df_path_order_destino, on = "Concepto", how = "outer")
-        df_path_max = df_path_max.fillna(0)
-        df_path_max["Max"] = df_path_max[["Cantidad Origen", "Cantidad Destino"]].max(axis=1).astype(int)
-        df_path_max = df_path_max[["Concepto", "Max"]]
-        
-        df_final["Cantidad Origen"] = df_final.merge(df_path_max, left_on = "Origen", right_on = "Concepto", how = "left")["Max"]
-        df_final["Cantidad Destino"] = df_final.merge(df_path_max, left_on = "Destino", right_on = "Concepto", how = "left")["Max"]
-        df_final["Min"] = df_final[["Cantidad Origen", "Cantidad Destino", "Cantidad Actual"]].min(axis=1).astype(int)
-        df_final["Max"] = df_final[["Cantidad Origen", "Cantidad Destino", "Cantidad Actual"]].max(axis=1).astype(int)
-        df_final = df_final.sort_values(by = ["Min", "Max", "Cantidad Origen", "Cantidad Destino", "Cantidad Actual"], ascending=[False, False, False, False, False]).reset_index().drop(columns = "index")
-    
-        #2. Generar Complementos de Tabla Original
-        conceptos_origen_destino = []
-    
-        for i in range(len(df_final)):
-            if df_final["Origen"][i] not in conceptos_origen_destino:
-                conceptos_origen_destino.append(df_final["Origen"][i])
-            
-            if df_final["Destino"][i] not in conceptos_origen_destino:
-                conceptos_origen_destino.append(df_final["Destino"][i])    
-    
-        #3. Tabla de Colores por Concepto de Sankey
-        conceptos_origen_destino_df = pd.DataFrame(conceptos_origen_destino, columns = ["Concepto"])
-        
-        df_concept_origen_colors = df_final[["Origen", "Color Origen"]][df_final["Origen"].isin(conceptos_origen_destino)].drop_duplicates().rename(columns = {"Origen":"Concepto", "Color Origen":"Color"})
-        df_concept_destino_colors = df_final[["Destino", "Color Destino"]][df_final["Destino"].isin(conceptos_origen_destino)].drop_duplicates().rename(columns = {"Destino":"Concepto", "Color Destino":"Color"})
-        
-        df_concept_colors = pd.concat([df_concept_origen_colors, df_concept_destino_colors]).drop_duplicates()
-        df_concept_colors = conceptos_origen_destino_df.merge(df_concept_colors, on = "Concepto", how = "inner")
-        st.write(df_concept_colors)
-    
         
         url = "https://www.sankeyart.com/sankeys/1426/"
         clicked = st.button("Load Page Content",type="primary")
         if clicked:
             with st.container(border=True):
                 with st.spinner("Loading page website..."):
-                    content = get_website_content(url, df, df_final, df_concept_colors)
+                    content = get_website_content(url, df)
                     #st.write(content)
 
 
