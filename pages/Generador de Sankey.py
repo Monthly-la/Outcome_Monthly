@@ -78,6 +78,8 @@ def get_website_content(url, df):
     
     df_concept_colors = pd.concat([df_concept_origen_colors, df_concept_destino_colors]).drop_duplicates()
     df_concept_colors = conceptos_origen_destino_df.merge(df_concept_colors, on = "Concepto", how = "inner")
+    st.subheader(str(list(df_concept_colors["Color"]))
+    st.markdown(str(list(df_concept_colors["Color"]))
 
     
     try:
@@ -162,6 +164,7 @@ def get_website_content(url, df):
             st.markdown(element)
             st.markdown(element.get_attribute('fill'))
             st.markdown("Prueba: " + str(df_concept_colors["Color"][c]))
+            st.markdown("Hola")
             driver.execute_script("arguments[0].setAttribute('fill', '" + df_concept_colors["Color"][c] + "')", element)
   
 
