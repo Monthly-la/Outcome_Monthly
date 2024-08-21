@@ -200,6 +200,7 @@ def get_website_content(url, df):
         ActionChains(driver).click(file_field[0]).perform()
         download_field = driver.find_element("xpath", "//a[@id='download_link_png']")
         sankey_url = download_field.get_attribute('href')
+        st.link_button("Descargar Sankey", sankey_url)
         st.markdown(sankey_url)
         ActionChains(driver).click(download_field).perform()
         st.markdown("Click al botón de descarga")
