@@ -225,11 +225,11 @@ def site_extraction_page():
         st.markdown("<h2 style='text-align: left; color: #14E79D; font-weight: bolder;'>PASO ✌</h2>"+"<p style='text-align: left; color: #5666FF; font-weight: bold;'>Sube el archivo con las cuentas: </p>", unsafe_allow_html=True)
         uploaded_file = st.file_uploader("Inserta el Excel (.xlsx, .csv) aquí:", type=['csv'])
     
-    if uploaded_file is not None:
-            df = pd.read_csv(uploaded_file)
-            df["Cantidad Actual"] = df["Cantidad Actual"].astype("string")
-            df["Cantidad Pasada"] = df["Cantidad Pasada"].astype("string")
-            st.write(df)
+        if uploaded_file is not None:
+                df = pd.read_csv(uploaded_file)
+                df["Cantidad Actual"] = df["Cantidad Actual"].astype("string")
+                df["Cantidad Pasada"] = df["Cantidad Pasada"].astype("string")
+                st.write(df)
 
     with input_3:
             url = "https://www.sankeyart.com/sankeys/1426/"
