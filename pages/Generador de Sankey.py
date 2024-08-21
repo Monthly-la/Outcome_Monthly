@@ -210,7 +210,7 @@ def site_extraction_page():
     uploaded_file = st.file_uploader("Inserta el Excel (.xlsx, .csv) aquí:", type=['csv'])
     
     if uploaded_file is not None:
-        column_1, columns_2 = st.columns(2)
+        column_1, column_2 = st.columns(2)
         with column_1:
             df = pd.read_csv(uploaded_file)
             df["Cantidad Actual"] = df["Cantidad Actual"].astype("string")
