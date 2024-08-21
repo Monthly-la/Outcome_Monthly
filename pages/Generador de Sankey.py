@@ -233,8 +233,9 @@ def site_extraction_page():
             with st.container(border=True):
                 with st.spinner("Loading page website..."):
                     sankey = get_website_content(url, df)
-                    img_data = requests.get(sankey).content
+                    print(sankey)
                     
+                    img_data = requests.get(sankey).content
                     with open('Sankey.jpg', 'wb') as handler:
                         handler.write(img_data)
 
