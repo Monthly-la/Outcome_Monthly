@@ -145,6 +145,7 @@ def get_website_content(url, df):
         for i in colors_rect:
             nodes.append(i.get_attribute('class'))
         st.markdown("Nodos Encontrados")
+        st.markdown(str(nodes))
         counter = 0
         index_node = []
         for x in nodes:
