@@ -206,20 +206,24 @@ def main_sidebar():
 
 def site_extraction_page():
 
-    #1. Lectura de Archivo
-    st.markdown("<h2 style='text-align: left; color: #14E79D; font-weight: bolder;'>PASO ☝️</h2>"+"<p style='text-align: left; color: #5666FF; font-weight: bold;'>Descarga el archivo template en el que registrarás las cuentas del Sankey: </p>", unsafe_allow_html=True)
-    #template_sankey_df = pd.DataFrame({'Origen': [""], 'Destino': [""], 'Cantidad Actual': [""], 'Cantidad Pasada': [""]})
-    
-    st.download_button(
-        label = "Descargar template 📥",
-        data = "Origen, Destino, Cantidad Actual, Cantidad Pasada",
-        file_name = "Template_Sankey.csv",
-        mime = "text/csv",
-    )
-    st.markdown("")
-    
-    st.markdown("<h2 style='text-align: left; color: #14E79D; font-weight: bolder;'>PASO ✌</h2>"+"<p style='text-align: left; color: #5666FF; font-weight: bold;'>Sube el archivo con las cuentas: </p>", unsafe_allow_html=True)
-    uploaded_file = st.file_uploader("Inserta el Excel (.xlsx, .csv) aquí:", type=['csv'])
+    input_1, input_2 = columns(2)
+
+    with input_1:
+        #1. Lectura de Archivo
+        st.markdown("<h2 style='text-align: left; color: #14E79D; font-weight: bolder;'>PASO ☝️</h2>"+"<p style='text-align: left; color: #5666FF; font-weight: bold;'>Descarga el archivo template en el que registrarás las cuentas del Sankey: </p>", unsafe_allow_html=True)
+        #template_sankey_df = pd.DataFrame({'Origen': [""], 'Destino': [""], 'Cantidad Actual': [""], 'Cantidad Pasada': [""]})
+        
+        st.download_button(
+            label = "Descargar template 📥",
+            data = "Origen, Destino, Cantidad Actual, Cantidad Pasada",
+            file_name = "Template_Sankey.csv",
+            mime = "text/csv",
+        )
+        st.markdown("")
+        
+    with input_2:
+        st.markdown("<h2 style='text-align: left; color: #14E79D; font-weight: bolder;'>PASO ✌</h2>"+"<p style='text-align: left; color: #5666FF; font-weight: bold;'>Sube el archivo con las cuentas: </p>", unsafe_allow_html=True)
+        uploaded_file = st.file_uploader("Inserta el Excel (.xlsx, .csv) aquí:", type=['csv'])
     
     if uploaded_file is not None:
         column_1, column_2 = st.columns(2)
