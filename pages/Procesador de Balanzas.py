@@ -27,7 +27,7 @@ with processor1:
     
     option = st.selectbox(
         "ERP:",
-        ("Alpha ERP","Contpaqi","Contalink", "Microsip", "SAP", "Netsuite (Oracle)"))
+        ("Alpha ERP","Contpaqi","Contalink", "Microsip", "SAP", "Aspel COI", "Netsuite (Oracle)"))
 
 
 
@@ -279,6 +279,94 @@ def process_data(df, option = option):
         outcome_df["Cuenta"] = outcome_df["Cuenta"].astype("str")
         
         return outcome_df
+
+#Aspel COI
+    if option == "Aspel COI":
+        #Contpaqi Excel Sheets
+        tabs = list(df.keys())
+        tabs_dates = []
+
+        outcome_df = pd.DataFrame(["","","",""], ["Cuenta", "Nombre", "Saldo Neto", "Sheet"]).T
+
+
+        for tab in tabs:
+            df = pd.read_excel(uploaded_file, sheet_name = tab)
+            df.columns = df.iloc[11]
+            df = df.dropna(subset = df.columns[1])[2:]
+            tabs_dates.append(tab)
+            
+            column_list = list(df.columns)
+            column_list = [x for x in column_list if str(x) != 'nan']
+            df = df[column_list]
+            
+            cuenta = []
+            cuenta_len = []
+            for i in list(df['No. de cuenta       Descripción']):
+                cuenta.append([x for x in i.split(" ") if str(x) != ""])
+                cuenta_len.append(len([x for x in i.split(" ") if str(x) != ""]))
+            
+            df["Cuenta"] = cuenta
+            df["Validación"] = cuenta_len
+            df = df[df["Validación"] > 1].drop(columns = [df.columns[0], "Validación"])
+            
+            codigo = []
+            nombre = []
+            for i in list(df["Cuenta"]):
+                if len(i[0]) == 13:
+                    codigo.append(i[0])
+                else:
+                    codigo.append(0)
+                nombre.append(" ".join(str(n) for n in i[1:]))
+            nombre
+            
+            df["Cuenta"] = codigo
+            df["Nombre"] = nombre
+            df = df[df["Cuenta"] != 0]
+            
+            nivel_list = []
+            
+            for i in list(df["Cuenta"]):
+                if (i.split("-")[1] == '0000'):
+                    nivel_list.append(1)
+                elif (i.split("-")[2][-2:] == '000') and (i.split("-")[1] != '0000'):
+                    nivel_list.append(2)
+                else:
+                    nivel_list.append(3)
+                        
+            
+            df["Nivel"] = nivel_list
+            
+            class_of_cuenta = []
+            for i in list(df["Cuenta"]):
+                class_of_cuenta.append(i[0])
+            
+            df["Class"] = class_of_cuenta
+            df["Class"] = df["Class"].astype("int")
+            
+            df.columns = ["Saldo Inicial", "Debe", "Haber", "Saldo Neto", "Cuenta", "Nombre", "Nivel", "Clase"]
+            #df["Saldo Final Deudor"] = df["Saldo Final Deudor"].astype("float")
+            #df["Saldo Final Acreedor"] = df["Saldo Final Acreedor"].astype("float")
+            df["Saldo Neto"] = df["Saldo Neto"].str.replace(',', '')
+            df["Saldo Neto"] = df["Saldo Neto"].astype(float)
+            
+            
+            activos = df[(df["Nivel"] == 1) & (df["Clase"] == 1)]["Saldo Neto"].sum()
+            pasivos = df[(df["Nivel"] == 1) & (df["Clase"] == 2)]["Saldo Neto"].sum()
+            capital= df[(df["Nivel"] == 1) & (df["Clase"] == 3)]["Saldo Neto"].sum()
+            utilidad_acum = df[(df["Nivel"] == 1) & (df["Clase"] >= 4)]["Saldo Neto"].sum()
+            
+            result = round(activos+pasivos+capital+utilidad_acum,1)
+                
+            results_df = pd.DataFrame({"Cuentas": ["Activos", "Pasivos", "Capital", "Utilidad Acumulada", "Sumatoria Final"], 
+                                       "Resultado":[activos, pasivos, capital, utilidad_acum, result]})
+        
+            if result == 0:
+                st.caption(tabs_date + " - Check ✅")
+            else:
+                st.caption(tabs_date + " - No Check ❌")
+            
+            st.dataframe(results_df, width = 1000)
+            st.divider()
 
 
 if uploaded_file is not None:
