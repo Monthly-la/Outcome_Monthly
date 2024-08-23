@@ -317,7 +317,6 @@ def process_data(df, option = option):
                 else:
                     codigo.append(0)
                 nombre.append(" ".join(str(n) for n in i[1:]))
-            nombre
             
             df["Cuenta"] = codigo
             df["Nombre"] = nombre
@@ -361,9 +360,9 @@ def process_data(df, option = option):
                                        "Resultado":[activos, pasivos, capital, utilidad_acum, result]})
         
             if result == 0:
-                st.caption(tabs_date + " - Check ✅")
+                st.caption(tab + " - Check ✅")
             else:
-                st.caption(tabs_date + " - No Check ❌")
+                st.caption(tab + " - No Check ❌")
             
             st.dataframe(results_df, width = 1000)
             st.divider()
