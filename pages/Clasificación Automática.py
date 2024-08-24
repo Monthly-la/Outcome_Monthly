@@ -1,4 +1,6 @@
 import streamlit as st
+import os
+
 
 st.set_page_config(
     page_title="Monthly - App Interna",
@@ -21,7 +23,8 @@ st.button("")
     
     #ChatGPT
     # Ensure the CSV has the correct column name
-    openai.api_key = ''
+    openai.api_key = os.getenv('OPENAI_API_KEY')
+
     
     classification_list = []
     for i in list(set(df["Clase"])):
