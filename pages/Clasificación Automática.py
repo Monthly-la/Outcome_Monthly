@@ -23,7 +23,6 @@ st.divider()
 #ChatGPT
 # Ensure the CSV has the correct column name
 
-Import OS
 os.environ["OPENAI_API_KEY"] = st.secrets["OPENAI_API_KEY"]
 openai.api_key = os.environ["OPENAI_API_KEY"]
 
