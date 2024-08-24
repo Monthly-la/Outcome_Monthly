@@ -10,7 +10,6 @@ st.set_page_config(
     layout="wide"
 )
 
-st.button("")
 
 header_logo_1, header_logo_2 = st.columns(2)
 with header_logo_1:
