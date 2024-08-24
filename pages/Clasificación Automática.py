@@ -73,4 +73,3 @@ st.button("")
     df_categorizado = df.merge(categoria_df, on = "Nombre", how = "left")
     
     st.write(df_categorizado)
-    st.write(
