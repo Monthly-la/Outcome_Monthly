@@ -1,5 +1,7 @@
 import streamlit as st
 import os
+from openai import OpenAI
+
 
 st.set_page_config(
     page_title="Monthly - App Interna",
@@ -21,10 +23,11 @@ with header_logo_2:
 st.divider()
 
 #ChatGPT
-# Ensure the CSV has the correct column name
+# Access the OpenAI API key from the secrets
+api_key = st.secrets["OPENAI_API_KEY"]
 
-os.environ["OPENAI_API_KEY"] = st.secrets["OPENAI_API_KEY"]
-openai.api_key = os.environ["OPENAI_API_KEY"]
+# Set up the OpenAI API client
+openai = OpenAI(api_key=api_key)
 
 
 classification_list = []
