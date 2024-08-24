@@ -29,7 +29,7 @@ api_key = st.secrets["OPENAI_API_KEY"]
 # Set up the OpenAI API client
 openai = OpenAI(api_key=api_key)
 
-uploaded_file = st.file_uploader("Inserta el Excel (.xlsx, .csv) aquí:", type=['xlsx'])
+uploaded_file = st.file_uploader("Inserta el Excel (.xlsx, .csv) aquí:", type=['csv'])
 st.write(uploaded_file)
 
 if uploaded_file is not None:
