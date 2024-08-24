@@ -61,12 +61,12 @@ classification_list.append(classification)
 categoria_df = pd.DataFrame(["",""], ["Nombre", "Categoría"]).T
 
 for c in classification_list:
-categoria_df = pd.concat([categoria_df,pd.DataFrame(eval(c), columns = ["Nombre", "Categoría"])])
-categoria_df = categoria_df.iloc[1:]
+    categoria_df = pd.concat([categoria_df,pd.DataFrame(eval(c), columns = ["Nombre", "Categoría"])])
+    categoria_df = categoria_df.iloc[1:]
 
 nombre_list = []
 for n in categoria_df["Nombre"]:
-nombre_list.append(n.strip())
+    nombre_list.append(n.strip())
 
 categoria_df["Nombre"] = nombre_list
 
