@@ -1,4 +1,5 @@
 import streamlit as st
+import streamlit.components.v1 as components
 
 st.set_page_config(
     page_title="Monthly - App Interna",
@@ -24,3 +25,9 @@ with header_logo_2:
     st.markdown("<h2 style='text-align: right; color: #5666FF;'>🔎 Lector de Información</h2>", unsafe_allow_html=True)
 
 st.divider()
+
+
+components.html(
+    """<iframe class="airtable-embed" src="https://airtable.com/embed/appDnGQVYvyrjZXik/shrcbjueA1qez2Dzx?viewControls=on" frameborder="0" onmousewheel="" width="100%" height="533" style="background: transparent; border: 1px solid #ccc;"></iframe>""",
+    height=600,
+)
