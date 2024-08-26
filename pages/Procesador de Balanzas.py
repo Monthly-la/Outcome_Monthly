@@ -6,6 +6,14 @@ st.set_page_config(
     layout="wide"
 )
 
+st.markdown("""
+<style>
+button {
+    background-color: #14E79D;
+}
+</style>
+""", unsafe_allow_html=True)
+
 header_logo_1, header_logo_2 = st.columns(2)
 with header_logo_1:
     st.image(
