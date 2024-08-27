@@ -38,11 +38,11 @@ api_key = st.secrets["OPENAI_API_KEY"]
 openai = OpenAI(api_key=api_key)
 
 uploaded_file = st.file_uploader("Inserta el Excel (.xlsx, .csv) aquí:", type=['csv'])
-df = pd.read_csv(uploaded_file)
-st.write(df)
+
 
 if uploaded_file is not None:
-
+    df = pd.read_csv(uploaded_file)
+    st.write(df)
     clicked = st.button("Generar Clasificación 🤖",type="primary")
     if clicked:
 
