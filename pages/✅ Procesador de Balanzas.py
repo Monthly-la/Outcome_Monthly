@@ -375,6 +375,68 @@ def process_data(df, option = option):
             st.dataframe(results_df, width = 1000)
             st.divider()
 
+    if option == "Alpha ERP":
+        ###### Alpha Excel Sheets
+        tabs = list(df.keys())
+        tabs_dates = []
+
+        outcome_df = pd.DataFrame(["","","",""], ["Cuenta", "Nombre", "Saldo Neto", "Sheet"]).T
+        
+        #Alpha Excel Sheets
+        for tab in tabs:
+            df = pd.read_excel(uploaded_file, sheet_name = tab)
+            tabs_date = df.iloc[1, 5][-8:]
+            tabs_dates.append(tabs_date)
+            
+            df = df.fillna(0)[6:-4]
+            
+            zero_cols = df.columns[(df == 0).all()]
+            df.drop(labels=zero_cols, axis=1, inplace=True)
+            df.columns = ["Código", "Cuenta", "Saldo Inicial Deudor", "Saldo Inicial Acreedor", "Cargos", "Abonos", "Saldo Final Deudor", "Saldo Final Acreedor"]
+            df = df[df["Código"] != 0]
+            
+            nivel_list = []
+            def count_leading_spaces(s):
+                count = 0
+                for char in s:
+                    if char == ' ':
+                        count += 1
+                    else:
+                        break
+                return count
+            
+            for i in df["Cuenta"]:
+                nivel_list.append(int(1+count_leading_spaces(i)/2))
+            
+            df["Nivel"] = nivel_list
+            
+            class_of_cuenta = []
+            for i in list(df["Código"]):
+                class_of_cuenta.append(i[0])
+            
+            df["Clase"] = class_of_cuenta
+            df["Clase"] = df["Clase"].astype("int")
+            
+            df["Saldo Neto"] = df["Saldo Final Deudor"] - df["Saldo Final Acreedor"]
+            
+            activos = df[(df["Nivel"] == 2) & (df["Clase"] == 1)]["Saldo Neto"].sum()
+            pasivos = df[(df["Nivel"] == 2) & (df["Clase"] == 2)]["Saldo Neto"].sum()
+            capital= df[(df["Nivel"] == 2) & (df["Clase"] == 3)]["Saldo Neto"].sum()
+            utilidad_acum = df[(df["Nivel"] == 2) & (df["Clase"] >= 4)]["Saldo Neto"].sum()
+            
+            result = round(activos+pasivos+capital+utilidad_acum,1)
+                
+            results_df = pd.DataFrame({"Cuentas": ["Activos", "Pasivos", "Capital", "Utilidad Acumulada", "Sumatoria Final"], 
+                                       "Resultado":[activos, pasivos, capital, utilidad_acum, result]})
+            
+            if result == 0:
+                st.caption(tabs_date + " - Check ✅")
+            else:
+                st.caption(tabs_date + " - No Check ❌")
+            
+            st.dataframe(results_df, width = 1000)
+            st.divider()
+
 
 if uploaded_file is not None:
     df = pd.read_excel(uploaded_file, sheet_name = None)
