@@ -444,10 +444,10 @@ if uploaded_file is not None:
     st.write(uploaded_file.name)
     st.write(uploaded_file.name[-3:])
     st.write(uploaded_file.name[:-4])
+    st.write(uploaded_file.name[:4] + '.xlsx')
     
     if uploaded_file.name[-3:] == "xls":
         p.save_book_as(file_name = uploaded_file.name, dest_file_name = uploaded_file.name[:4] + '.xlsx')
-        st.write(uploaded_file.name[:4] + '.xlsx')
     
     df = pd.read_excel(uploaded_file, sheet_name = None)
     
