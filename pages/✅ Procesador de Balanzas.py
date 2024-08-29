@@ -456,7 +456,7 @@ if uploaded_file is not None:
             
             # Convert DataFrame to Excel
             towrite = BytesIO()
-            processed_df.to_excel(towrite, index=False)  # Using 'openpyxl' for .xlsx files
+            processed_df.to_excel(towrite, index=False, engine = 'openpyxl')  # Using 'openpyxl' for .xlsx files
             towrite.seek(0)
 
         with processor3:
