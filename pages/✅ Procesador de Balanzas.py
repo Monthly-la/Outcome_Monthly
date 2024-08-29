@@ -1,4 +1,8 @@
 import streamlit as st
+import pyexcel as p
+import pandas as pd
+from io import BytesIO
+
 
 st.set_page_config(
     page_title="Monthly - App Interna",
@@ -24,9 +28,7 @@ with header_logo_2:
     st.markdown("<h2 style='text-align: right; color: #5666FF;'>✅ Procesador de Balanzas de Comprobación</h2>", unsafe_allow_html=True)
 
 st.divider()
-import streamlit as st
-import pandas as pd
-from io import BytesIO
+
 
 processor1, paddingA, processor2, paddingB, processor3 = st.columns([5,1,5,1,5])
 with processor1:
@@ -439,6 +441,13 @@ def process_data(df, option = option):
 
 
 if uploaded_file is not None:
+    st.write(uploaded_file.name)
+    st.write(uploaded_file.name[-3:])
+    st.write(uploaded_file.name[:4])
+    
+    if uploaded_file.name[-3:] == "xls":
+        p.save_book_as(file_name = uploaded_file.name, dest_file_name = uploaded_file.name[:4] + '.xlsx')
+    
     df = pd.read_excel(uploaded_file, sheet_name = None)
     
     if st.button('Correr 🚶‍♂️'):
