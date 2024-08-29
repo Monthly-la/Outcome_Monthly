@@ -40,7 +40,7 @@ with processor1:
 
 
 
-    uploaded_file = st.file_uploader("Inserta el Excel (.xlsx, .csv) aquí:", type=['xlsx'])
+    uploaded_file = st.file_uploader("Inserta el Excel (.xlsx, .csv) aquí:", type=['xlsx', 'xls'])
 
 def process_data(df, option = option):
     tabs = list(df.keys())
