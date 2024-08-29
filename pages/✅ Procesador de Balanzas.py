@@ -439,7 +439,7 @@ def process_data(df, option = option):
 
 
 if uploaded_file is not None:
-    df = pd.read_excel(uploaded_file, sheet_name = None)
+    df = pd.read_excel(uploaded_file, sheet_name = None, engine="openpyxl")
     
     if st.button('Correr 🚶‍♂️'):
         # Process the DataFrame
