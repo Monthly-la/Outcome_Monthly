@@ -290,6 +290,86 @@ def process_data(df, option = option):
         
         return outcome_df
 
+#Contalink
+    if option == "Contalink":
+        #Contalink Excel Sheets
+        tabs = list(df.keys())
+        tabs_dates = []
+
+        outcome_df = pd.DataFrame(["","","",""], ["Cuenta", "Nombre", "Saldo Neto", "Sheet"]).T
+
+
+        for tab in tabs:
+            df = pd.read_excel(uploaded_file, sheet_name = tab)
+            
+            df.columns = df.iloc[2]
+            df = df.dropna(subset = df.columns[1])
+            df = df[["No CUENTA","CUENTA", "SALDO INICIAL", "DEBE", "HABER", "SALDO FINAL"]]
+            
+            class_of_cuenta = []
+            for i in list(df["No CUENTA"]):
+                class_of_cuenta.append(i[0])
+            
+            df["Class"] = class_of_cuenta
+            df["Class"] = df["Class"].astype("int")
+            
+            codigo_verif = []
+            for i in df["No CUENTA"]:
+                codigo_verif.append(len(i.split("-")))
+            
+            df["Código Verif"] = codigo_verif
+            df = df[df["Código Verif"] == 3].drop(columns = "Código Verif")
+            
+            
+            nivel_list = []
+                
+            for i in list(df["No CUENTA"]):
+                if (i.split("-")[2] == '000'):
+                    if (i.split("-")[1] == '000'):
+                        nivel_list.append(1)
+                    else:
+                        nivel_list.append(2)
+                else:
+                    nivel_list.append(3)
+            
+            df["Nivel"] = nivel_list
+                
+            df.columns = ["Código", "Cuenta", "Saldo Inicial", "Debe", "Haber", "Saldo Final", "Clase", "Nivel"]
+            #df["Saldo Neto"] = df["Saldo Neto"].str.replace(',', '')
+            df["Saldo Final"] = df["Saldo Final"].astype(float)
+        
+            #Depreciacion Corregida
+            #df[df["Cuenta"] == 'DEPRECIACION ACUMULADA'] = -1*df[df["Cuenta"] == 'DEPRECIACION ACUMULADA'][["Saldo Inicial", "Debe", "Haber", "Saldo Neto"]]
+            df.loc[df["Cuenta"] == 'DEPRECIACION ACUMULADA', ["Saldo Inicial", "Debe", "Haber", "Saldo Final"]] = df.loc[df["Cuenta"] == 'DEPRECIACION ACUMULADA', ["Saldo Inicial", "Debe", "Haber", "Saldo Final"]] * -1
+        
+            saldo_neto = []
+            for i in range(len(df)):
+                if df["Clase"].iloc[i] <= 3:
+                    saldo_neto.append(df["Saldo Final"].iloc[i])
+                else:
+                    saldo_neto.append(df["Haber"].iloc[i]-df["Debe"].iloc[i])
+        
+            df["Saldo Neto"] = saldo_neto
+        
+            activos = df[(df["Nivel"] == 1) & (df["Clase"] == 1)]["Saldo Neto"].sum()
+            pasivos = df[(df["Nivel"] == 1) & (df["Clase"] == 2)]["Saldo Neto"].sum()
+            capital = df[(df["Nivel"] == 1) & (df["Clase"] == 3)]["Saldo Neto"].sum()
+            utilidad_acum = df[(df["Nivel"] == 1) & (df["Clase"] >= 4)]["Saldo Neto"].sum()
+            
+            result = round(activos-pasivos-capital-utilidad_acum,1)
+                
+            results_df = pd.DataFrame({"Cuentas": ["Activos", "Pasivos", "Capital", "Utilidad Acumulada", "Sumatoria Final"], 
+                                       "Resultado":[activos, pasivos, capital, utilidad_acum, result]})
+            
+            if result == 0:
+                st.caption(tab + " - Check ✅")
+            else:
+                st.caption(tab + " - No Check ❌")
+            
+            st.dataframe(results_df, width = 1000)
+            st.divider()
+
+    
 #Aspel COI
     if option == "Aspel COI":
         #Contpaqi Excel Sheets
