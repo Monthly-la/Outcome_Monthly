@@ -9,6 +9,8 @@ st.set_page_config(
     page_icon="💸",
     layout="wide"
 )
+primary_clr = st.get_option("theme.primaryColor")
+
 
 st.markdown("""
 <style>
