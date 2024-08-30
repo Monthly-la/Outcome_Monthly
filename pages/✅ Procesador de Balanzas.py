@@ -526,7 +526,7 @@ if uploaded_file is not None:
         try:
             p.save_book_as(file_name = uploaded_file.name, dest_file_name = uploaded_file.name[:-4] + '.xlsx')
         except:
-            coninue
+            continue
     
     df = pd.read_excel(uploaded_file, sheet_name = None)
     
