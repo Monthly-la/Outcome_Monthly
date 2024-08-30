@@ -41,7 +41,7 @@ def merge_excel_files(excel_files):
     
     return output
 
-excel_files  = st.file_uploader("Inserta el Excel (.xlsx, .csv) aquí:", type=['xlsx'], accept_multiple_files=True)
+excel_files  = st.file_uploader("Inserta el Excel (.xlsx, .csv) aquí:", type=['xlsx', 'xls'], accept_multiple_files=True)
 
 
 # Create a new Excel workbook
