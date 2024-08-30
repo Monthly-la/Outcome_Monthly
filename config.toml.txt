@@ -1,5 +1,0 @@
-[client]
-showErrorDetails = false
-
-[theme]
-primaryColor = "#5666FF"
