@@ -523,7 +523,10 @@ def process_data(df, option = option):
 if uploaded_file is not None:
     
     if uploaded_file.name[-3:] == "xls":
-        p.save_book_as(file_name = uploaded_file.name, dest_file_name = uploaded_file.name[:-4] + '.xlsx')
+        try:
+            p.save_book_as(file_name = uploaded_file.name, dest_file_name = uploaded_file.name[:-4] + '.xlsx')
+        except:
+            coninue
     
     df = pd.read_excel(uploaded_file, sheet_name = None)
     
