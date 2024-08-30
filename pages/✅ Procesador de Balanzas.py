@@ -301,6 +301,7 @@ def process_data(df, option = option):
 
         for tab in tabs:
             df = pd.read_excel(uploaded_file, sheet_name = tab)
+            tabs_date = df.iloc[1,2][-7:]
             
             df.columns = df.iloc[2]
             df = df.dropna(subset = df.columns[1])
@@ -362,9 +363,9 @@ def process_data(df, option = option):
                                        "Resultado":[activos, pasivos, capital, utilidad_acum, result]})
             
             if result == 0:
-                st.caption(tab + " - Check ✅")
+                st.caption(tabs_date + " - Check ✅")
             else:
-                st.caption(tab + " - No Check ❌")
+                st.caption(tabs_date + " - No Check ❌")
             
             st.dataframe(results_df, width = 1000)
             st.divider()
