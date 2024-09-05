@@ -39,7 +39,7 @@ with processor1:
     
     option = st.selectbox(
         "ERP:",
-        ("Alpha ERP","Contpaqi","Contalink", "Microsip", "SAP", "Aspel COI", "Netsuite (Oracle)"))
+        ("Alpha ERP","Contpaqi","Contalink", "Microsip", "Aspel COI"))
 
 
 
