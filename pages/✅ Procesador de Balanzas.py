@@ -556,7 +556,6 @@ def process_data(df, option = option):
                 validacion.append(i[-1].isdigit())
             
             df["Valid"] = validacion
-            display(df[df["Valid"] == False])
             df = df[(df["Valid"] == True) | ((df["Valid"] == False) & (df["Nivel"] == 2))]
             
             activos = df[(df["Nivel"] == 2) & (df["Clase"] == 1)]["Saldo Neto"].sum()
