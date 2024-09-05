@@ -417,7 +417,7 @@ def process_data(df, option = option):
         outcome_df = outcome_df[["Código", "Cuenta"] + tabs_dates]
         
         outcome_df["Código"] = outcome_df["Código"].astype("str")
-        outcome_df
+        return outcome_df
 
     
 #Aspel COI
