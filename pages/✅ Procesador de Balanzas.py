@@ -570,6 +570,52 @@ def process_data(df, option = option):
             st.divider()
 
 
+            #Outcome Matrix
+            balance_df = df[(df["Nivel"] == 3) & (df["Clase"] <= 3)][["Código","Cuenta","Saldo Neto"]]
+            balance_df["Sheet"] = tabs_date
+        
+            inc_statem_df = df[(df["Clase"] > 3)]
+            general = []
+            
+            for i in inc_statem_df["Código"]:
+                general.append(i[:4])
+            inc_statem_df["Cuenta General"] = general
+            
+            detalle_df = inc_statem_df.groupby(by = ["Cuenta General", "Nivel"]).agg({"Código":"count", "Saldo Neto":"sum"}).reset_index()
+            
+            nivel_deseado = []
+            for c in list(set(detalle_df["Cuenta General"])):
+                detalle_nivel_df = detalle_df[detalle_df["Cuenta General"] == c]    
+                if len(detalle_nivel_df[detalle_nivel_df["Código"] >= 2]) > 0:
+                    nivel_deseado.append([c, max(detalle_nivel_df[detalle_nivel_df["Código"] >= 2]["Nivel"])])
+                else:
+                    nivel_deseado.append([c, 1])   
+            nivel_deseado_df = pd.DataFrame(nivel_deseado, columns = ["Cuenta General", "Nivel Deseado"])
+            
+            detalle_deseado_df = detalle_df.merge(nivel_deseado_df, on = "Cuenta General", how = "left")[["Cuenta General", "Nivel Deseado"]].drop_duplicates()
+        
+            inc_statem_df = inc_statem_df.merge(detalle_deseado_df, on = "Cuenta General", how = "left")
+            
+            inc_statem_df = inc_statem_df[inc_statem_df["Nivel"] == inc_statem_df["Nivel Deseado"]]
+            inc_statem_df = inc_statem_df[["Código","Cuenta","Saldo Neto"]]
+            inc_statem_df["Sheet"] = tabs_date
+            
+            outcome_df = pd.concat([outcome_df, balance_df, inc_statem_df])
+        outcome_df = outcome_df.pivot(index=["Código","Cuenta"], columns=["Sheet"], values=["Saldo Neto"]).iloc[1:].reset_index().droplevel(0, axis = 1)
+        outcome_df = outcome_df.fillna(0)
+        
+        outcome_columns = ["Código","Cuenta"]
+        
+        for i in outcome_df.columns[2:]:
+            outcome_columns.append(i)
+        
+        outcome_df.columns = outcome_columns
+        outcome_df = outcome_df[["Código","Cuenta"] + tabs_dates]
+        
+        outcome_df["Código"] = outcome_df["Código"].astype("str")
+        return outcome_df
+
+
 if uploaded_file is not None:
     
     if uploaded_file.name[-3:] == "xls":
