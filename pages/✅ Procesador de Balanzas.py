@@ -420,6 +420,7 @@ def process_data(df, option = option):
         tidy_df = outcome_df
         outcome_df = outcome_df.pivot(index=["Código", "Cuenta"], columns=["Sheet"], values=["Saldo Neto"]).iloc[1:].reset_index().droplevel(0, axis = 1)
         outcome_df = outcome_df.fillna(0)
+        tidy_df = tidy_df.iloc[1:]
         
         outcome_columns = ["Código", "Cuenta"]
         
