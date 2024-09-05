@@ -716,7 +716,7 @@ if uploaded_file is not None:
             st.dataframe(processed_df[0])
 
             # Create a link for downloading
-            st.download_button(label='Descarga Archivo 📃',
+            st.download_button(label='Descarga Matriz 📃',
                             data=matrix,
                             file_name='matrix_output.xlsx',
                             mime='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
@@ -725,7 +725,7 @@ if uploaded_file is not None:
             st.dataframe(processed_df[1])
 
             # Create a link for downloading
-            st.download_button(label='Descarga Archivo 📃',
+            st.download_button(label='Descarga Tabular 📃',
                             data=tidy,
                             file_name='tidy_output.xlsx',
                             mime='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
