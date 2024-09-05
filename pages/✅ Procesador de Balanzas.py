@@ -668,7 +668,7 @@ def process_data(df, option = option):
             outcome_df = pd.concat([outcome_df, balance_df, inc_statem_df])
         
         tidy_df = outcome_df[["Código", "Cuenta", "Sheet", "Saldo Neto"]]
-        tidy_df = tidy_df[tidy_df["Cuenta"].notnull()]
+        tidy_df = tidy_df[tidy_df["Código"].notnull()]
         tidy_df = tidy_df.dropna(how='all')
 
         
