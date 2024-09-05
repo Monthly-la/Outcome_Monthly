@@ -544,7 +544,9 @@ def process_data(df, option = option):
             
             outcome_df = pd.concat([outcome_df, balance_df, inc_statem_df])
         
-        tidy_df = outcome_df
+        tidy_df = outcome_df[["Cuenta", "Nombre", "Sheet", "Saldo Neto"]]
+        tidy_df = tidy_df.dropna(how='all')
+        
         outcome_df = outcome_df.pivot(index=["Cuenta", "Nombre"], columns=["Sheet"], values=["Saldo Neto"]).iloc[1:].reset_index().droplevel(0, axis = 1)
         outcome_df = outcome_df.fillna(0)
         
