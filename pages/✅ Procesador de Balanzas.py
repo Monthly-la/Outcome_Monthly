@@ -722,6 +722,9 @@ if uploaded_file is not None:
                             mime='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
             
             st.markdown("")
+            st.divider()
+            st.markdown("")
+            
             st.dataframe(processed_df[1])
 
             # Create a link for downloading
