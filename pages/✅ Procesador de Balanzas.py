@@ -140,7 +140,8 @@ def process_data(df, option = option):
             inc_statem_df["Sheet"] = tab
         
             outcome_df = pd.concat([outcome_df, balance_df, inc_statem_df])
-    
+
+        tidy_df = outcome_df
         outcome_df = outcome_df.pivot(index=["Cuenta", "Nombre"], columns=["Sheet"], values=["Saldo Neto"]).iloc[1:].reset_index().droplevel(0, axis = 1)
         outcome_df = outcome_df.fillna(0)
 
@@ -153,7 +154,7 @@ def process_data(df, option = option):
         outcome_df = outcome_df.drop(columns = ["Espaciador"])[["Cuenta", "Nombre"] + tabs]
         outcome_df["Cuenta"] = outcome_df["Cuenta"].astype("str")
 
-        return outcome_df
+        return outcome_df, tidy_df
 
 #Contpaqi
     if option == "Contpaqi":
@@ -277,6 +278,7 @@ def process_data(df, option = option):
 
             outcome_df = pd.concat([outcome_df, balance_df, inc_statem_df])
         
+        tidy_df = outcome_df
         outcome_df = outcome_df.pivot(index=["Cuenta", "Nombre"], columns=["Sheet"], values=["Saldo Neto"]).iloc[1:].reset_index().droplevel(0, axis = 1)
         outcome_df = outcome_df.fillna(0)
 
@@ -290,7 +292,7 @@ def process_data(df, option = option):
 
         outcome_df["Cuenta"] = outcome_df["Cuenta"].astype("str")
         
-        return outcome_df
+        return outcome_df, tidy_df
 
 #Contalink
     if option == "Contalink":
@@ -405,6 +407,8 @@ def process_data(df, option = option):
             inc_statem_df["Sheet"] = tabs_date
             
             outcome_df = pd.concat([outcome_df, balance_df, inc_statem_df])
+        
+        tidy_df = outcome_df
         outcome_df = outcome_df.pivot(index=["Código", "Cuenta"], columns=["Sheet"], values=["Saldo Neto"]).iloc[1:].reset_index().droplevel(0, axis = 1)
         outcome_df = outcome_df.fillna(0)
         
@@ -417,7 +421,8 @@ def process_data(df, option = option):
         outcome_df = outcome_df[["Código", "Cuenta"] + tabs_dates]
         
         outcome_df["Código"] = outcome_df["Código"].astype("str")
-        return outcome_df
+        
+        return outcome_df, tidy_df
 
     
 #Aspel COI
@@ -538,6 +543,8 @@ def process_data(df, option = option):
             inc_statem_df["Sheet"] = tab
             
             outcome_df = pd.concat([outcome_df, balance_df, inc_statem_df])
+        
+        tidy_df = outcome_df
         outcome_df = outcome_df.pivot(index=["Cuenta", "Nombre"], columns=["Sheet"], values=["Saldo Neto"]).iloc[1:].reset_index().droplevel(0, axis = 1)
         outcome_df = outcome_df.fillna(0)
         
@@ -550,7 +557,8 @@ def process_data(df, option = option):
         outcome_df = outcome_df[["Cuenta", "Nombre"] + tabs_dates]
         
         outcome_df["Cuenta"] = outcome_df["Cuenta"].astype("str")
-        return outcome_df
+        
+        return outcome_df, tidy_df
 
     
 
@@ -655,6 +663,8 @@ def process_data(df, option = option):
             inc_statem_df["Sheet"] = tabs_date
             
             outcome_df = pd.concat([outcome_df, balance_df, inc_statem_df])
+        
+        tidy_df = outcome_df
         outcome_df = outcome_df.pivot(index=["Código","Cuenta"], columns=["Sheet"], values=["Saldo Neto"]).iloc[1:].reset_index().droplevel(0, axis = 1)
         outcome_df = outcome_df.fillna(0)
         
@@ -667,7 +677,8 @@ def process_data(df, option = option):
         outcome_df = outcome_df[["Código","Cuenta"] + tabs_dates]
         
         outcome_df["Código"] = outcome_df["Código"].astype("str")
-        return outcome_df
+        
+        return outcome_df, tidy_df
 
 
 if uploaded_file is not None:
@@ -688,18 +699,34 @@ if uploaded_file is not None:
             processed_df = process_data(df)
             
             # Convert DataFrame to Excel
-            towrite = BytesIO()
-            processed_df.to_excel(towrite, index=False, engine = 'openpyxl')  # Using 'openpyxl' for .xlsx files
-            towrite.seek(0)
+            matrix = BytesIO()
+            processed_df[0].to_excel(matrix, index=False, engine = 'openpyxl')  # Using 'openpyxl' for .xlsx files
+            matrix.seek(0)
+
+            tidy = BytesIO()
+            processed_df[1].to_excel(tidy, index=False, engine = 'openpyxl')  # Using 'openpyxl' for .xlsx files
+            tidy.seek(0)
+
+            
 
         with processor3:
             st.markdown("<h2 style='text-align: center; color: #14E79D; font-weight: bolder;'>PASO 👌</h2>"+"<p style='text-align: center; color: #5666FF; font-weight: bold;'>Descarga el archivo procesado</p>", unsafe_allow_html=True)
             st.markdown("")
             # Optionally display the processed DataFrame (comment out if not needed)
-            st.dataframe(processed_df)
+            st.dataframe(processed_df[0])
 
             # Create a link for downloading
             st.download_button(label='Descarga Archivo 📃',
-                            data=towrite,
-                            file_name='processed_output.xlsx',
+                            data=matrix,
+                            file_name='matrix_output.xlsx',
                             mime='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+            
+            st.markdown("")
+            st.dataframe(processed_df[1])
+
+            # Create a link for downloading
+            st.download_button(label='Descarga Archivo 📃',
+                            data=tidy,
+                            file_name='tidy_output.xlsx',
+                            mime='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+            
