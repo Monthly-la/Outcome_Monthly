@@ -550,6 +550,14 @@ def process_data(df, option = option):
             df["Clase"] = df["Clase"].astype("int")
             
             df["Saldo Neto"] = df["Saldo Final Deudor"] - df["Saldo Final Acreedor"]
+
+            validacion = []
+            for i in df["Código"]:
+                validacion.append(i[-1].isdigit())
+            
+            df["Valid"] = validacion
+            display(df[df["Valid"] == False])
+            df = df[(df["Valid"] == True) | ((df["Valid"] == False) & (df["Nivel"] == 2))]
             
             activos = df[(df["Nivel"] == 2) & (df["Clase"] == 1)]["Saldo Neto"].sum()
             pasivos = df[(df["Nivel"] == 2) & (df["Clase"] == 2)]["Saldo Neto"].sum()
