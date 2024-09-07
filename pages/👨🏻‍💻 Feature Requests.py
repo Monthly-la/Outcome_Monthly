@@ -63,10 +63,10 @@ def send_email(subject, message, to_email):
 
 # Form fields
 with st.form(key='contact_form'):
-    name = st.text_input("Name")
-    email = st.text_input("Email")
-    subject = st.text_input("Subject")
-    message = st.text_area("Message")
+    name = st.text_input("Nombre")
+    email = st.text_input("Correo")
+    subject = st.text_input("Asunto")
+    message = st.text_area("Mensaje")
 
     submit_button = st.form_submit_button(label='Submit')
 
