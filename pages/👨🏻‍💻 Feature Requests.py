@@ -60,8 +60,6 @@ def send_email(subject, message, to_email):
     except Exception as e:
         return False, str(e)
 
-# Streamlit app to create the form
-st.title("Contact Form")
 
 # Form fields
 with st.form(key='contact_form'):
