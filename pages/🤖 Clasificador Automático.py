@@ -137,7 +137,6 @@ if uploaded_file is not None:
             
             #Clasificación Monthly
             clasificacion_seccion_df = clasificacion_df.merge(monthly_cat_clase, left_on = ["Categoría", "Clase"], right_on = ["CATEGORÍA (MONTHLY WAY)", "Clase"], how = "left").fillna(0)
-            clasificacion_seccion_df
             
             #Llenado final de clasificaciones vacías
             classification_full_list = []
