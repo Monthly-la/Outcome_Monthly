@@ -140,13 +140,12 @@ def process_data(df, option = option):
             inc_statem_df["Sheet"] = tab
         
             outcome_df = pd.concat([outcome_df, balance_df, inc_statem_df])
+            outcome_df = outcome_df.rename(columns = {"Cuenta":"Código", "Nombre":"Subcuenta"})
 
-        tidy_df = outcome_df[["Cuenta", "Nombre", "Sheet", "Saldo Neto"]]
-        tidy_df = tidy_df[tidy_df["Cuenta"].notnull()]
+        tidy_df = outcome_df[["Código", "Subcuenta", "Sheet", "Saldo Neto"]]
+        tidy_df = tidy_df[tidy_df["Código"].notnull()]
         tidy_df = tidy_df.dropna(how='all')
         tidy_df = tidy_df.iloc[1:]
-        tidy_df = tidy_df.rename(columns = {"Cuenta":"Código", "Nombre":"Subcuenta"})
-
         
         outcome_df = outcome_df.pivot(index=["Código", "Subcuenta"], columns=["Sheet"], values=["Saldo Neto"]).iloc[1:].reset_index().droplevel(0, axis = 1)
         outcome_df = outcome_df.fillna(0)
@@ -283,12 +282,12 @@ def process_data(df, option = option):
             inc_statem_df["Sheet"] = tabs_date
 
             outcome_df = pd.concat([outcome_df, balance_df, inc_statem_df])
-        
-        tidy_df = outcome_df[["Cuenta", "Nombre", "Sheet", "Saldo Neto"]]
-        tidy_df = tidy_df[tidy_df["Cuenta"].notnull()]
+            outcome_df = outcome_df.rename(columns = {"Cuenta":"Código", "Nombre":"Subcuenta"})
+
+        tidy_df = outcome_df[["Código", "Subcuenta", "Sheet", "Saldo Neto"]]
+        tidy_df = tidy_df[tidy_df["Código"].notnull()]
         tidy_df = tidy_df.dropna(how='all')
         tidy_df = tidy_df.iloc[1:]
-        tidy_df = tidy_df.rename(columns = {"Cuenta":"Código", "Nombre":"Subcuenta"})
         
         outcome_df = outcome_df.pivot(index=["Código", "Subcuenta"], columns=["Sheet"], values=["Saldo Neto"]).iloc[1:].reset_index().droplevel(0, axis = 1)
         outcome_df = outcome_df.fillna(0)
@@ -418,13 +417,15 @@ def process_data(df, option = option):
             inc_statem_df["Sheet"] = tabs_date
             
             outcome_df = pd.concat([outcome_df, balance_df, inc_statem_df])
+            outcome_df = outcome_df.rename(columns = {"Cuenta":"Subcuenta"})
+
+        tidy_df = outcome_df[["Código", "Subcuenta", "Sheet", "Saldo Neto"]]
         
         tidy_df = outcome_df
-        outcome_df = outcome_df.pivot(index=["Código", "Cuenta"], columns=["Sheet"], values=["Saldo Neto"]).iloc[1:].reset_index().droplevel(0, axis = 1)
+        outcome_df = outcome_df.pivot(index=["Código", "Subcuenta"], columns=["Sheet"], values=["Saldo Neto"]).iloc[1:].reset_index().droplevel(0, axis = 1)
         outcome_df = outcome_df.fillna(0)
         tidy_df = tidy_df.iloc[1:]
-        tidy_df = tidy_df.drop(columns = "Nombre")
-        tidy_df = tidy_df.rename(columns = {"Cuenta":"Subcuenta"})
+        tidy_df = tidy_df.drop(columns = "Nombre")        
         
         outcome_columns = ["Código", "Subcuenta"]
         
@@ -557,12 +558,12 @@ def process_data(df, option = option):
             inc_statem_df["Sheet"] = tab
             
             outcome_df = pd.concat([outcome_df, balance_df, inc_statem_df])
-        
-        tidy_df = outcome_df[["Cuenta", "Nombre", "Sheet", "Saldo Neto"]]
-        tidy_df = tidy_df[tidy_df["Cuenta"].notnull()]
+            outcome_df = outcome_df.rename(columns = {"Cuenta":"Código" ,"Nombre":"Subcuenta"})
+
+        tidy_df = outcome_df[["Código", "Subcuenta", "Sheet", "Saldo Neto"]]
+        tidy_df = tidy_df[tidy_df["Subcuenta"].notnull()]
         tidy_df = tidy_df.dropna(how='all')
         tidy_df = tidy_df.iloc[1:]
-        tidy_df = tidy_df.rename(columns = {"Cuenta":"Código" ,"Nombre":"Subcuenta"})
         
         outcome_df = outcome_df.pivot(index=["Código", "Subcuenta"], columns=["Sheet"], values=["Saldo Neto"]).iloc[1:].reset_index().droplevel(0, axis = 1)
         outcome_df = outcome_df.fillna(0)
@@ -682,8 +683,9 @@ def process_data(df, option = option):
             inc_statem_df["Sheet"] = tabs_date
             
             outcome_df = pd.concat([outcome_df, balance_df, inc_statem_df])
-        
-        tidy_df = outcome_df[["Código", "Cuenta", "Sheet", "Saldo Neto"]]
+            outcome_df = outcome_df.rename(columns = {"Cuenta":"Subcuenta"})
+
+        tidy_df = outcome_df[["Código", "Subcuenta", "Sheet", "Saldo Neto"]]
         tidy_df = tidy_df[tidy_df["Código"].notnull()]
         tidy_df = tidy_df.dropna(how='all')
         tidy_df = tidy_df.rename(columns = {"Cuenta":"Subcuenta"})
