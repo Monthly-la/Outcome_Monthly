@@ -2,6 +2,12 @@ import streamlit as st
 import pandas as pd
 import os
 from openai import OpenAI
+import numpy as np
+import re
+
+
+
+pd.options.display.float_format = '{:,.2f}'.format
 
 
 st.set_page_config(
@@ -86,7 +92,6 @@ if uploaded_file is not None:
             for i in set(list(df["Clase"])):
                 print(i)
                 cat = list(set(monthly_cat_clase[(monthly_cat_clase["Clase"] == i) & (monthly_cat_clase["ID-CATEGORÍA"] == "ES-MONTHLY")]["CATEGORÍA (MONTHLY WAY)"]))
-                print(cat)
                 if i <= 3:
                     words_list = list(df[(df["Nivel"] == 1) & (df["Clase"] == i)]["Nombre"])
                 else:
@@ -94,7 +99,7 @@ if uploaded_file is not None:
                         words_list = list(df[(df["Nivel"] == 1) & (df["Clase"] == i)]["Nombre"])
                     else:
                         words_list = list(df[(df["Nivel"] <= 2) & (df["Clase"] == i)]["Nombre"])
-                print(words_list)
+                st.write(words_list)
                 classification = classify_word(words_list, cat)
                 match = re.search(r"\[.*\]", classification)
             
