@@ -145,19 +145,20 @@ def process_data(df, option = option):
         tidy_df = tidy_df[tidy_df["Cuenta"].notnull()]
         tidy_df = tidy_df.dropna(how='all')
         tidy_df = tidy_df.iloc[1:]
+        tidy_df = tidy_df.rename(columns = {"Cuenta":"Código", "Nombre":"Subcuenta"})
 
         
-        outcome_df = outcome_df.pivot(index=["Cuenta", "Nombre"], columns=["Sheet"], values=["Saldo Neto"]).iloc[1:].reset_index().droplevel(0, axis = 1)
+        outcome_df = outcome_df.pivot(index=["Código", "Subcuenta"], columns=["Sheet"], values=["Saldo Neto"]).iloc[1:].reset_index().droplevel(0, axis = 1)
         outcome_df = outcome_df.fillna(0)
 
-        outcome_columns = ["Cuenta", "Nombre", "Espaciador"]
+        outcome_columns = ["Código", "Subcuenta", "Espaciador"]
 
         for i in outcome_df.columns[3:]:
             outcome_columns.append(i)
 
         outcome_df.columns = outcome_columns
-        outcome_df = outcome_df.drop(columns = ["Espaciador"])[["Cuenta", "Nombre"] + tabs]
-        outcome_df["Cuenta"] = outcome_df["Cuenta"].astype("str")
+        outcome_df = outcome_df.drop(columns = ["Espaciador"])[["Código", "Subcuenta"] + tabs]
+        outcome_df["Código"] = outcome_df["Código"].astype("str")
 
         return outcome_df, tidy_df
 
@@ -287,19 +288,20 @@ def process_data(df, option = option):
         tidy_df = tidy_df[tidy_df["Cuenta"].notnull()]
         tidy_df = tidy_df.dropna(how='all')
         tidy_df = tidy_df.iloc[1:]
+        tidy_df = tidy_df.rename(columns = {"Cuenta":"Código", "Nombre":"Subcuenta"})
         
-        outcome_df = outcome_df.pivot(index=["Cuenta", "Nombre"], columns=["Sheet"], values=["Saldo Neto"]).iloc[1:].reset_index().droplevel(0, axis = 1)
+        outcome_df = outcome_df.pivot(index=["Código", "Subcuenta"], columns=["Sheet"], values=["Saldo Neto"]).iloc[1:].reset_index().droplevel(0, axis = 1)
         outcome_df = outcome_df.fillna(0)
 
-        outcome_columns = ["Cuenta", "Nombre"]
+        outcome_columns = ["Código", "Subcuenta"]
 
         for i in outcome_df.columns[2:]:
             outcome_columns.append(i)
 
         outcome_df.columns = outcome_columns
-        outcome_df = outcome_df[["Cuenta", "Nombre"] + tabs_dates]
+        outcome_df = outcome_df[["Código", "Subcuenta"] + tabs_dates]
 
-        outcome_df["Cuenta"] = outcome_df["Cuenta"].astype("str")
+        outcome_df["Código"] = outcome_df["Código"].astype("str")
         
         return outcome_df, tidy_df
 
@@ -421,14 +423,16 @@ def process_data(df, option = option):
         outcome_df = outcome_df.pivot(index=["Código", "Cuenta"], columns=["Sheet"], values=["Saldo Neto"]).iloc[1:].reset_index().droplevel(0, axis = 1)
         outcome_df = outcome_df.fillna(0)
         tidy_df = tidy_df.iloc[1:]
+        tidy_df = tidy_df.drop(columns = "Nombre")
+        tidy_df = tidy_df.rename(columns = {"Cuenta":"Subcuenta"})
         
-        outcome_columns = ["Código", "Cuenta"]
+        outcome_columns = ["Código", "Subcuenta"]
         
         for i in outcome_df.columns[2:]:
             outcome_columns.append(i)
         
         outcome_df.columns = outcome_columns
-        outcome_df = outcome_df[["Código", "Cuenta"] + tabs_dates]
+        outcome_df = outcome_df[["Código", "Subcuenta"] + tabs_dates]
         
         outcome_df["Código"] = outcome_df["Código"].astype("str")
         
@@ -558,19 +562,20 @@ def process_data(df, option = option):
         tidy_df = tidy_df[tidy_df["Cuenta"].notnull()]
         tidy_df = tidy_df.dropna(how='all')
         tidy_df = tidy_df.iloc[1:]
+        tidy_df = tidy_df.rename(columns = {"Cuenta":"Código" ,"Nombre":"Subcuenta"})
         
-        outcome_df = outcome_df.pivot(index=["Cuenta", "Nombre"], columns=["Sheet"], values=["Saldo Neto"]).iloc[1:].reset_index().droplevel(0, axis = 1)
+        outcome_df = outcome_df.pivot(index=["Código", "Subcuenta"], columns=["Sheet"], values=["Saldo Neto"]).iloc[1:].reset_index().droplevel(0, axis = 1)
         outcome_df = outcome_df.fillna(0)
         
-        outcome_columns = ["Cuenta", "Nombre"]
+        outcome_columns = ["Código", "Subcuenta"]
         
         for i in outcome_df.columns[2:]:
             outcome_columns.append(i)
         
         outcome_df.columns = outcome_columns
-        outcome_df = outcome_df[["Cuenta", "Nombre"] + tabs_dates]
+        outcome_df = outcome_df[["Código", "Subcuenta"] + tabs_dates]
         
-        outcome_df["Cuenta"] = outcome_df["Cuenta"].astype("str")
+        outcome_df["Código"] = outcome_df["Código"].astype("str")
         
         return outcome_df, tidy_df
 
@@ -681,18 +686,19 @@ def process_data(df, option = option):
         tidy_df = outcome_df[["Código", "Cuenta", "Sheet", "Saldo Neto"]]
         tidy_df = tidy_df[tidy_df["Código"].notnull()]
         tidy_df = tidy_df.dropna(how='all')
+        tidy_df = tidy_df.rename(columns = {"Cuenta":"Subcuenta"})
 
         
-        outcome_df = outcome_df.pivot(index=["Código","Cuenta"], columns=["Sheet"], values=["Saldo Neto"]).iloc[1:].reset_index().droplevel(0, axis = 1)
+        outcome_df = outcome_df.pivot(index=["Código","Subcuenta"], columns=["Sheet"], values=["Saldo Neto"]).iloc[1:].reset_index().droplevel(0, axis = 1)
         outcome_df = outcome_df.fillna(0)
         
-        outcome_columns = ["Código","Cuenta"]
+        outcome_columns = ["Código","Subcuenta"]
         
         for i in outcome_df.columns[2:]:
             outcome_columns.append(i)
         
         outcome_df.columns = outcome_columns
-        outcome_df = outcome_df[["Código","Cuenta"] + tabs_dates]
+        outcome_df = outcome_df[["Código","Subcuenta"] + tabs_dates]
         
         outcome_df["Código"] = outcome_df["Código"].astype("str")
         
