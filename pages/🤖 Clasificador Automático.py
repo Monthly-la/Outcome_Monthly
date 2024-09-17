@@ -47,25 +47,12 @@ if uploaded_file is not None:
     if clicked:
 
         with st.spinner("Generando Clasificaciones:"):
+            # Ensure the CSV has the correct column name
             classification_list = []
-            for i in list(set(df["Clase"])):
-                words_list = df[df["Clase"] == i]["Nombre"].tolist()
-                
-                # Step 2: Use GPT to Suggest 5 Categories
-                prompt_for_categories = f"Basado en las siguientes palabras: {', '.join(words_list)}, sugiere 5 distintas categorías en las cual clasificarlas. No redactes nada más que una lista de 5 conceptos (no descripciones, no preámbulo de la respuesta, no conclusión; sólo la lista separada por comas)"
-                response = openai.chat.completions.create(
-                    model="gpt-4",  # Use the desired model
-                    messages=[
-                        {"role": "system", "content": "You are a helpful assistant."},
-                        {"role": "user", "content": prompt_for_categories}
-                    ]
-                )
-                categories = response.choices[0].message.content.strip().split('\n')
-                st.markdown(categories)
                 
             # Step 3: Classify Each Word
             def classify_word(word, categories):
-                prompt_for_classification = f"Clasifica las palabras {', '.join(words_list)} en una de las siguientes categorias: {', '.join(categories)}. No incluyas explicación, ni desarrollo, ni justificación; sólamente la categoría que más se asemeje. Si es que no hay suficiente información para clasificar, pon la clasificación previa. Entregame esta clasificación en formato lista de tuples de python de esta manera: [('Palabra 1','Categoría'), ('Palabra 2': 'Categoría'), ('Palabra 3': 'Categoría')...]"
+                prompt_for_classification = f"Clasifica las palabras {', '.join(word)} en una de las siguientes categorias: {', '.join(categories)}. No incluyas explicación, ni desarrollo, ni justificación; sólamente la categoría que más se asemeje. Si es que no hay suficiente información para clasificar, pon la clasificación 0. Entregame esta clasificación en formato lista de listas de python de esta manera: [['Palabra 1','Categoría'], ['Palabra 2': 'Categoría'], ['Palabra 3': 'Categoría']...]"
                 response = openai.chat.completions.create(
                     model="gpt-4",
                     messages=[
@@ -75,24 +62,79 @@ if uploaded_file is not None:
                     
                 )
                 classification = response.choices[0].message.content.strip()
-                st.markdown(classification)
                 return classification
+            
+            for i in set(list(df["Clase"])):
+                print(i)
+                cat = list(set(monthly_cat_clase[(monthly_cat_clase["Clase"] == i) & (monthly_cat_clase["ID-CATEGORÍA"] == "ES-MONTHLY")]["CATEGORÍA (MONTHLY WAY)"]))
+                print(cat)
+                if i <= 3:
+                    words_list = list(df[(df["Nivel"] == 1) & (df["Clase"] == i)]["Nombre"])
+                else:
+                    if len(list(df[(df["Nivel"] == 2) & (df["Clase"] == i)]["Nombre"]) ) == 0:
+                        words_list = list(df[(df["Nivel"] == 1) & (df["Clase"] == i)]["Nombre"])
+                    else:
+                        words_list = list(df[(df["Nivel"] <= 2) & (df["Clase"] == i)]["Nombre"])
+                print(words_list)
+                classification = classify_word(words_list, cat)
+                match = re.search(r"\[.*\]", classification)
+            
+                try:
+                    if match:
+                        classification = eval(match.group())
+                        classification_list.append(classification)
+                except:
+                    data_cleaned = eval(classification.replace("\n", ""))
+                    classification_list.append(data_cleaned)
+                finally:
+                    pass
+                    
+            result = sum(classification_list, [])
+            
+            if len(classification_list[0]) == 1:
+                classification_list = [classification_list[:2]] + classification_list[2:]
+            if len(classification_list[-1]) == 1:
+                classification_list = classification_list[:-2] + [classification_list[-2:]]
+            
+            try:
+                result = result.replace("\n", "")
+            except:
+                pass
                 
-            classification = classify_word(words_list, categories)
-            classification_list.append(classification)
+            result_df = pd.DataFrame(result, columns=['Nombre', 'Categoría']).drop_duplicates()
             
-            categoria_df = pd.DataFrame(["",""], ["Nombre", "Categoría"]).T
+            #Clasificación Chat GPT con Insumo original
+            clasificacion_df = df.merge(result_df, on = "Nombre", how = "left").fillna(0)
             
-            for c in classification_list:
-                categoria_df = pd.concat([categoria_df,pd.DataFrame(eval(c), columns = ["Nombre", "Categoría"])])
-                categoria_df = categoria_df.iloc[1:]
+            #Llenado de Ramificaciones vacías
+            for i in range(len(clasificacion_df)):
+                if clasificacion_df["Categoría"].iloc[i] == 0 :
+                   clasificacion_df["Categoría"].iloc[i] = clasificacion_df["Categoría"].iloc[i-1]
             
-            nombre_list = []
-            for n in categoria_df["Nombre"]:
-                nombre_list.append(n.strip())
+            #Clasificación Monthly
+            clasificacion_seccion_df = clasificacion_df.merge(monthly_cat_clase, left_on = ["Categoría", "Clase"], right_on = ["CATEGORÍA (MONTHLY WAY)", "Clase"], how = "left").fillna(0)
+            clasificacion_seccion_df
             
-            categoria_df["Nombre"] = nombre_list
+            #Llenado final de clasificaciones vacías
+            classification_full_list = []
+            section_full_list = []
+            section_code_full_list = []
             
-            df_categorizado = df.merge(categoria_df, on = "Nombre", how = "left")
+            for i in range(len(clasificacion_seccion_df)):
+                if clasificacion_seccion_df["CATEGORÍA (MONTHLY WAY)"].iloc[i] == 0 :
+                    classification_full_list.append(classification_full_list[i-1])
+                    section_full_list.append(section_full_list[i-1])
+                    section_code_full_list.append(section_code_full_list[i-1])
+                else:
+                    classification_full_list.append(clasificacion_seccion_df["CATEGORÍA (MONTHLY WAY)"].iloc[i])
+                    section_full_list.append(clasificacion_seccion_df["SECCIÓN (MONTHLY WAY)"].iloc[i])
+                    section_code_full_list.append(clasificacion_seccion_df["SECCIÓN"].iloc[i])
             
-            st.write(df_categorizado)
+            clasificacion_seccion_df["CATEGORÍA (MONTHLY WAY) - Full"] = classification_full_list
+            clasificacion_seccion_df["SECCIÓN (MONTHLY WAY) - Full"] = section_full_list
+            clasificacion_seccion_df["ID-CATEGORÍA - Full"] = "ES-MONTHLY"
+            clasificacion_seccion_df["SECCIÓN - Full"] = section_code_full_list
+            
+            clasificacion_seccion_df["Sheet"] = "Ene/2023"
+            
+            st.write(clasificacion_seccion_df)
