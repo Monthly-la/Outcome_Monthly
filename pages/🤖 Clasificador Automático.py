@@ -48,6 +48,25 @@ if uploaded_file is not None:
 
         with st.spinner("Generando Clasificaciones:"):
             # Ensure the CSV has the correct column name
+
+            activos_cat = ["Efectivo y bancos", "Inventario", "Clientes", "Impuestos por cobrar", "Cuentas por cobrar", "Anticipo a proveedores", 
+          "Activos fijos", "Activos intangibles", "Otros activos a largo plazo", "Depreciación acumulada", "Amortización acumulada"]
+
+            pasivos_capital_cat = ["Proveedores", "Impuestos por pagar", "Anticipo de clientes", "Cuentas por pagar", "Deuda a corto plazo", "Deuda a largo plazo", 
+                     "Otros pasivos a largo plazo", "Capital de accionistas", "Dividendos pagados", "Utilidades retenidas"]
+
+
+            seccion_cat = pd.read_excel("Monthly - Catalogo.xlsx", sheet_name = "Categorización de clientes")
+            seccion_cat = seccion_cat[seccion_cat["ID-CATEGORÍA"] == "ES-MONTHLY"]
+            seccion_cat[["SECCIÓN (MONTHLY WAY)", "SECCIÓN"]].drop_duplicates()
+
+            seccion_v_balanza_df = pd.read_excel("Monthly - Catalogo.xlsx", sheet_name = "Sección contra Balanza").fillna("").melt(id_vars=["SECCIÓN"], var_name='Clase', value_name='SECCIÓN (MONTHLY WAY)')
+            seccion_v_balanza_df = seccion_v_balanza_df[seccion_v_balanza_df["SECCIÓN (MONTHLY WAY)"] != ""]
+
+            monthly_cat = pd.read_excel("Monthly - Catalogo.xlsx", sheet_name = "Categorización de clientes")[["CATEGORÍA (MONTHLY WAY)","SECCIÓN (MONTHLY WAY)", "SECCIÓN", "ID-CATEGORÍA"]]
+            monthly_cat_clase = monthly_cat.merge(seccion_v_balanza_df, on = ["SECCIÓN", "SECCIÓN (MONTHLY WAY)"], how = "left").drop_duplicates()
+            monthly_cat_clase = monthly_cat_clase[monthly_cat_clase["ID-CATEGORÍA"] == "ES-MONTHLY"]
+            
             classification_list = []
                 
             # Step 3: Classify Each Word
