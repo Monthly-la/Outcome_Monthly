@@ -16,3 +16,5 @@ with header_logo_2:
     st.markdown("<h2 style='text-align: right; color: #5666FF;'>🏠 Inicio</h2>", unsafe_allow_html=True)
 
 st.divider()
+
+st.image("Monthly. Arquitectura de Datos.png")
