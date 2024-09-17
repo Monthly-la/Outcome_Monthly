@@ -17,4 +17,4 @@ with header_logo_2:
 
 st.divider()
 
-st.image("Monthly. Arquitectura de Datos.png")
+st.image("Monthly. Arquitectura de Datos.svg")
