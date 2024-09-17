@@ -140,7 +140,8 @@ def process_data(df, option = option):
             inc_statem_df["Sheet"] = tab
         
             outcome_df = pd.concat([outcome_df, balance_df, inc_statem_df])
-        
+
+        details_df = outcome_df
         outcome_df = outcome_df.rename(columns = {"Cuenta":"Código", "Nombre":"Subcuenta"})
         tidy_df = outcome_df[["Código", "Subcuenta", "Sheet", "Saldo Neto"]]
         tidy_df = tidy_df[tidy_df["Código"].notnull()]
@@ -159,7 +160,7 @@ def process_data(df, option = option):
         outcome_df = outcome_df.drop(columns = ["Espaciador"])[["Código", "Subcuenta"] + tabs]
         outcome_df["Código"] = outcome_df["Código"].astype("str")
 
-        return outcome_df, tidy_df
+        return outcome_df, tidy_df, details_df
 
 #Contpaqi
     if option == "Contpaqi":
@@ -282,7 +283,8 @@ def process_data(df, option = option):
             inc_statem_df["Sheet"] = tabs_date
 
             outcome_df = pd.concat([outcome_df, balance_df, inc_statem_df])
-        
+
+        details_df = outcome_df
         outcome_df = outcome_df.rename(columns = {"Cuenta":"Código", "Nombre":"Subcuenta"})
         tidy_df = outcome_df[["Código", "Subcuenta", "Sheet", "Saldo Neto"]]
         tidy_df = tidy_df[tidy_df["Código"].notnull()]
@@ -302,7 +304,7 @@ def process_data(df, option = option):
 
         outcome_df["Código"] = outcome_df["Código"].astype("str")
         
-        return outcome_df, tidy_df
+        return outcome_df, tidy_df, details_df
 
 #Contalink
     if option == "Contalink":
@@ -417,7 +419,8 @@ def process_data(df, option = option):
             inc_statem_df["Sheet"] = tabs_date
             
             outcome_df = pd.concat([outcome_df, balance_df, inc_statem_df])
-        
+
+        details_df = outcome_df
         outcome_df = outcome_df.rename(columns = {"Cuenta":"Subcuenta"})
         tidy_df = outcome_df[["Código", "Subcuenta", "Sheet", "Saldo Neto"]]
         tidy_df = outcome_df
@@ -436,7 +439,7 @@ def process_data(df, option = option):
         
         outcome_df["Código"] = outcome_df["Código"].astype("str")
         
-        return outcome_df, tidy_df
+        return outcome_df, tidy_df, details_df
 
     
 #Aspel COI
@@ -557,7 +560,8 @@ def process_data(df, option = option):
             inc_statem_df["Sheet"] = tab
             
             outcome_df = pd.concat([outcome_df, balance_df, inc_statem_df])
-        
+
+        details_df = outcome_df
         outcome_df = outcome_df.rename(columns = {"Cuenta":"Código" ,"Nombre":"Subcuenta"})
         tidy_df = outcome_df[["Código", "Subcuenta", "Sheet", "Saldo Neto"]]
         tidy_df = tidy_df[tidy_df["Subcuenta"].notnull()]
@@ -577,7 +581,7 @@ def process_data(df, option = option):
         
         outcome_df["Código"] = outcome_df["Código"].astype("str")
         
-        return outcome_df, tidy_df
+        return outcome_df, tidy_df, details_df
 
     
 
@@ -682,7 +686,8 @@ def process_data(df, option = option):
             inc_statem_df["Sheet"] = tabs_date
             
             outcome_df = pd.concat([outcome_df, balance_df, inc_statem_df])
-        
+
+        details_df = outcome_df
         outcome_df = outcome_df.rename(columns = {"Cuenta":"Subcuenta"})
         tidy_df = outcome_df[["Código", "Subcuenta", "Sheet", "Saldo Neto"]]
         tidy_df = tidy_df[tidy_df["Código"].notnull()]
@@ -703,7 +708,7 @@ def process_data(df, option = option):
         
         outcome_df["Código"] = outcome_df["Código"].astype("str")
         
-        return outcome_df, tidy_df
+        return outcome_df, tidy_df, details_df
 
 
 if uploaded_file is not None:
@@ -732,6 +737,17 @@ if uploaded_file is not None:
             processed_df[1].to_excel(tidy, index=False, engine = 'openpyxl')  # Using 'openpyxl' for .xlsx files
             tidy.seek(0)
 
+            details = BytesIO()
+            processed_df[2].to_excel(details, index=False, engine = 'openpyxl')  # Using 'openpyxl' for .xlsx files
+            details.seek(0)
+
+            st.download_button(label='Descarga Tabla de Detalle 📃',
+                            data=details,
+                            file_name='details.xlsx',
+                            mime='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+            
+
+        
             
 
         with processor3:
