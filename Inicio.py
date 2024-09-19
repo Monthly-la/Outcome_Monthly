@@ -18,7 +18,7 @@ with header_logo_2:
 st.divider()
 st.markdown("")
 
-st.markdown("<h3 style='text-align: center; color: #14E79D​;'>Ⓜ️ MODELO DE SERVICIO</h3>", unsafe_allow_html=True)
+st.markdown("<h3 style='text-align: center; color: #14E79D​; font-weight: bolder;'>Ⓜ️ MODELO DE SERVICIO</h3>", unsafe_allow_html=True)
 st.markdown("")
 
 cl_prospeccion, cl_venta, cl_onboarding, cl_operaciones, cl_postventa, cl_recursos = st.columns(6)
