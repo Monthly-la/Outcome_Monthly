@@ -27,20 +27,20 @@ with cl_prospeccion:
     st.link_button("Linktree Monthly", "https://linktr.ee/monthlyla", use_container_width=True)
     st.link_button("Linktree Valora", "https://linktr.ee/valora.la", use_container_width=True)
     st.link_button("Tidycal Demo", "https://tidycal.com/jona/monthly-demo-30", use_container_width=True)
-    st.link_button("Website (Monthly)", "https://monthly.la/")
-    st.link_button("Website (Valora)", "https://valora.la/")
-    st.link_button("Instagram", "https://www.instagram.com/monthly.la/")
-    st.link_button("LInkedin", "https://www.linkedin.com/company/monthlyla/")
+    st.link_button("Website (Monthly)", "https://monthly.la/", use_container_width=True)
+    st.link_button("Website (Valora)", "https://valora.la/", use_container_width=True)
+    st.link_button("Instagram", "https://www.instagram.com/monthly.la/", use_container_width=True)
+    st.link_button("LInkedin", "https://www.linkedin.com/company/monthlyla/", use_container_width=True)
     
     
 with cl_venta:
     st.markdown("<h3 style='text-align: right; color: #5666FF;'>Venta</h3>", unsafe_allow_html=True)
     st.markdown("")
-    st.link_button("Linktree Start", "https://linktr.ee/monthly.start")
+    st.link_button("Linktree Start", "https://linktr.ee/monthly.start", use_container_width=True)
     #st.link_button("PDF Comercial", "")
-    st.link_button("Payment Links", "https://www.notion.so/Stripe-links-4a6b8046b85d4959a458239ff184020c")
-    st.link_button("CRM", "https://airtable.com/app2GD2pTpJAZ8JEq/tblmo0rAeoOju6yYu/viw0d5JhbaF9EbCcp?blocks=hide")
-    st.link_button("Fillout (Subscripción de Cliente)", "https://forms.fillout.com/t/xrzArzx8guus")
+    st.link_button("Payment Links", "https://www.notion.so/Stripe-links-4a6b8046b85d4959a458239ff184020c", use_container_width=True)
+    st.link_button("CRM", "https://airtable.com/app2GD2pTpJAZ8JEq/tblmo0rAeoOju6yYu/viw0d5JhbaF9EbCcp?blocks=hide", use_container_width=True)
+    st.link_button("Fillout (Subscripción de Cliente)", "https://forms.fillout.com/t/xrzArzx8guus", use_container_width=True)
 
 st.markdown("")
 st.divider()
