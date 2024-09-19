@@ -42,5 +42,8 @@ with cl_venta:
     st.link_button("CRM", "https://airtable.com/app2GD2pTpJAZ8JEq/tblmo0rAeoOju6yYu/viw0d5JhbaF9EbCcp?blocks=hide")
     st.link_button("Fillout (Subscripción de Cliente)", "https://forms.fillout.com/t/xrzArzx8guus")
 
+st.markdown("")
+st.divider()
+st.markdown("")
 st.image("Monthly. Arquitectura de Datos.svg")
     
