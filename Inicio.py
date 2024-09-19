@@ -23,8 +23,8 @@ cl_prospeccion, cl_venta, cl_onboarding, cl_operaciones, cl_postventa, cl_recurs
 with cl_prospeccion:
     st.markdown("<h3 style='text-align: right; color: #5666FF;'>Prospección</h3>", unsafe_allow_html=True)
     st.markdown("")
-    st.link_button("Substack", "https://visualcfo.substack.com/")
-    st.link_button("Linktree Monthly", "https://linktr.ee/monthlyla")
+    st.link_button("Substack", "https://visualcfo.substack.com/", use_column_width=True)
+    st.link_button("Linktree Monthly", "https://linktr.ee/monthlyla", use_column_width=True)
     st.link_button("Linktree Valora", "https://linktr.ee/valora.la")
     st.link_button("Tidycal Demo", "https://tidycal.com/jona/monthly-demo-30")
     st.link_button("Website (Monthly)", "https://monthly.la/")
