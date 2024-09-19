@@ -141,7 +141,6 @@ def process_data(df, option = option):
         
             outcome_df = pd.concat([outcome_df, balance_df, inc_statem_df])
 
-        details_df = outcome_df
         outcome_df = outcome_df.rename(columns = {"Cuenta":"Código", "Nombre":"Subcuenta"})
         tidy_df = outcome_df[["Código", "Subcuenta", "Sheet", "Saldo Neto"]]
         tidy_df = tidy_df[tidy_df["Código"].notnull()]
@@ -160,7 +159,7 @@ def process_data(df, option = option):
         outcome_df = outcome_df.drop(columns = ["Espaciador"])[["Código", "Subcuenta"] + tabs]
         outcome_df["Código"] = outcome_df["Código"].astype("str")
 
-        return outcome_df, tidy_df, details_df
+        return outcome_df, tidy_df, df
 
 #Contpaqi
     if option == "Contpaqi":
@@ -284,7 +283,6 @@ def process_data(df, option = option):
 
             outcome_df = pd.concat([outcome_df, balance_df, inc_statem_df])
 
-        details_df = outcome_df
         outcome_df = outcome_df.rename(columns = {"Cuenta":"Código", "Nombre":"Subcuenta"})
         tidy_df = outcome_df[["Código", "Subcuenta", "Sheet", "Saldo Neto"]]
         tidy_df = tidy_df[tidy_df["Código"].notnull()]
@@ -304,7 +302,7 @@ def process_data(df, option = option):
 
         outcome_df["Código"] = outcome_df["Código"].astype("str")
         
-        return outcome_df, tidy_df, details_df
+        return outcome_df, tidy_df, df
 
 #Contalink
     if option == "Contalink":
@@ -420,7 +418,6 @@ def process_data(df, option = option):
             
             outcome_df = pd.concat([outcome_df, balance_df, inc_statem_df])
 
-        details_df = outcome_df
         outcome_df = outcome_df.rename(columns = {"Cuenta":"Subcuenta"})
         tidy_df = outcome_df[["Código", "Subcuenta", "Sheet", "Saldo Neto"]]
         tidy_df = outcome_df
@@ -439,7 +436,7 @@ def process_data(df, option = option):
         
         outcome_df["Código"] = outcome_df["Código"].astype("str")
         
-        return outcome_df, tidy_df, details_df
+        return outcome_df, tidy_df, df
 
     
 #Aspel COI
@@ -561,7 +558,6 @@ def process_data(df, option = option):
             
             outcome_df = pd.concat([outcome_df, balance_df, inc_statem_df])
 
-        details_df = outcome_df
         outcome_df = outcome_df.rename(columns = {"Cuenta":"Código" ,"Nombre":"Subcuenta"})
         tidy_df = outcome_df[["Código", "Subcuenta", "Sheet", "Saldo Neto"]]
         tidy_df = tidy_df[tidy_df["Subcuenta"].notnull()]
@@ -581,7 +577,7 @@ def process_data(df, option = option):
         
         outcome_df["Código"] = outcome_df["Código"].astype("str")
         
-        return outcome_df, tidy_df, details_df
+        return outcome_df, tidy_df, df
 
     
 
@@ -687,7 +683,6 @@ def process_data(df, option = option):
             
             outcome_df = pd.concat([outcome_df, balance_df, inc_statem_df])
 
-        details_df = outcome_df
         outcome_df = outcome_df.rename(columns = {"Cuenta":"Subcuenta"})
         tidy_df = outcome_df[["Código", "Subcuenta", "Sheet", "Saldo Neto"]]
         tidy_df = tidy_df[tidy_df["Código"].notnull()]
@@ -708,7 +703,7 @@ def process_data(df, option = option):
         
         outcome_df["Código"] = outcome_df["Código"].astype("str")
         
-        return outcome_df, tidy_df, details_df
+        return outcome_df, tidy_df, df
 
 
 if uploaded_file is not None:
