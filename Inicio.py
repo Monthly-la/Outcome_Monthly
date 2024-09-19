@@ -56,7 +56,7 @@ with cl_operaciones:
     st.link_button("Plataforma Interna", "https://outcome-monthly.streamlit.app/", use_container_width=True)
     st.link_button("Manual de Nuevo Reporte", "", use_container_width=True)
     st.link_button("Excel (Graficación)", "https://monthlyla.sharepoint.com/:x:/s/monthly.la/EWB3hy7QuFBPp8bE4fJOhIwBb3MxBX8ZHjMPeSg6ZYmfsA?e=eJE90X", use_container_width=True)
-    st.link_button("Ppt (ReporteCFO)", "", use_container_width=True)
+    st.link_button("Ppt (ReporteCFO)", "https://monthlyla.sharepoint.com/:p:/s/monthly.la/ESOkjEa_ONNCmIDnjoHWQIMBBnPnc8BcT5mLChupGsBCyQ?e=x60h1j", use_container_width=True)
     st.link_button("Sankey", "https://www.sankeyart.com/", use_container_width=True)
     st.link_button("Fillout (Documentos Mensuales)", "https://forms.fillout.com/t/vzB2cu9gHDus", use_container_width=True)
     st.link_button("ChatGPT (Monthly)", "", use_container_width=True)
