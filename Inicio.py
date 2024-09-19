@@ -37,8 +37,8 @@ with cl_venta:
     st.markdown("<h3 style='text-align: center; color: #5666FF;'> Venta</h3>", unsafe_allow_html=True)
     st.markdown("")
     st.link_button("Linktree (Start)", "https://linktr.ee/monthly.start", use_container_width=True)
-    st.link_button("PDF Comercial - Brochure", "", use_container_width=True)
-    st.link_button("PDF Comercial - Presentación", "", use_container_width=True)
+    st.link_button("PDF Comercial - Brochure", "https://monthlyla-my.sharepoint.com/:b:/g/personal/arturo_monthly_la/EbEPyt-8V7lPk08nF75nyBABWjO2izBwqfXgkfo4VPO4rA?e=r6N2dO", use_container_width=True)
+    st.link_button("PDF Comercial - Presentación", "https://monthlyla-my.sharepoint.com/:b:/g/personal/arturo_monthly_la/EXDdSWXKW9xOvu-XiZtZCeYB2wrs_aEoddLezXgsxY7W4A?e=Aan92l", use_container_width=True)
     st.link_button("Notion (Payment Links)", "https://www.notion.so/Stripe-links-4a6b8046b85d4959a458239ff184020c", use_container_width=True)
     st.link_button("CRM", "https://airtable.com/app2GD2pTpJAZ8JEq/tblmo0rAeoOju6yYu/viw0d5JhbaF9EbCcp?blocks=hide", use_container_width=True)
     st.link_button("Fillout (Subscripción de Cliente)", "https://forms.fillout.com/t/xrzArzx8guus", use_container_width=True)
@@ -65,9 +65,7 @@ with cl_operaciones:
 with cl_postventa:
     st.markdown("<h3 style='text-align: center; color: #5666FF;'> Postventa</h3>", unsafe_allow_html=True)
     st.markdown("")
-    st.link_button("Link Plataforma", "https://outcome-monthly.streamlit.app/", use_container_width=True)
-    st.link_button("Documento de Errores Comunes", "", use_container_width=True)
-    st.link_button("Manual de Nuevo Reporte", "", use_container_width=True)
+    st.link_button("Solicitud de Modificaciones", "https://forms.fillout.com/t/wcdh4d4kpLus", use_container_width=True)
 
 with cl_recursos:
     st.markdown("<h3 style='text-align: center; color: #5666FF;'> Recursos</h3>", unsafe_allow_html=True)
