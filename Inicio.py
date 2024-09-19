@@ -18,3 +18,25 @@ with header_logo_2:
 st.divider()
 
 st.image("Monthly. Arquitectura de Datos.svg")
+
+cl_prospeccion, cl_venta, cl_onboarding, cl_operaciones, cl_postventa, cl_recursos = st.columns(6)
+
+with cl_prospeccion:
+    st.link_button("Substack", "https://visualcfo.substack.com/")
+    st.link_button("Linktree Monthly", "https://linktr.ee/monthlyla")
+    st.link_button("Linktree Valora", "https://linktr.ee/valora.la")
+    st.link_button("Tidycal Demo", "https://tidycal.com/jona/monthly-demo-30")
+    st.link_button("Website (Monthly)", "https://monthly.la/")
+    st.link_button("Website (Valora)", "https://valora.la/")
+    st.link_button("Instagram", "https://www.instagram.com/monthly.la/")
+    st.link_button("LInkedin", "https://www.linkedin.com/company/monthlyla/")
+    
+    
+with cl_venta:
+    st.link_button("Linktree Start", "https://linktr.ee/monthly.start")
+    #st.link_button("PDF Comercial", "")
+    st.link_button("Payment Links", "https://www.notion.so/Stripe-links-4a6b8046b85d4959a458239ff184020c")
+    st.link_button("CRM", "https://airtable.com/app2GD2pTpJAZ8JEq/tblmo0rAeoOju6yYu/viw0d5JhbaF9EbCcp?blocks=hide")
+    st.link_button("Fillout (Subscripción de Cliente)", "https://forms.fillout.com/t/xrzArzx8guus")
+    
+    
