@@ -81,11 +81,16 @@ with cl_recursos:
     st.link_button("Manual Financiero", "https://www.notion.so/Monthly-Way-El-iQ-del-CFO-Virtual-48e24fbc16334c109db479810d88e2b3", use_container_width=True)
 
 st.markdown("")
+st.markdown("")
 st.divider()
 st.markdown("")
 st.markdown("")
 st.markdown("")
 
 st.markdown("<h3 style='text-align: center; color: #14E79D​; font-weight: bolder;'>ARQUITECTURA DE DATOS</h3>", unsafe_allow_html=True)
+
+st.markdown("")
+st.markdown("")
+st.divider()
 st.image("Monthly. Arquitectura de Datos.svg")
     
