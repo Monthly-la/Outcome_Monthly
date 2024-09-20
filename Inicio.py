@@ -88,9 +88,8 @@ st.markdown("")
 st.markdown("")
 
 st.markdown("<h3 style='text-align: center; color: #14E79D​; font-weight: bolder;'>ARQUITECTURA DE DATOS</h3>", unsafe_allow_html=True)
-
+st.image("Monthly. Arquitectura de Datos.svg")
 st.markdown("")
 st.markdown("")
 st.divider()
-st.image("Monthly. Arquitectura de Datos.svg")
     
