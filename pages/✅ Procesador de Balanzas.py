@@ -59,7 +59,11 @@ def process_data(df, option = option):
             df = df.fillna(0)
             
             df.columns = df.loc[4]
-            df = df.loc[5:].reset_index().drop(columns = {"index",0})
+            try:
+                df = df.loc[5:].reset_index().drop(columns = {"index",0})
+            except:
+                df = df.loc[5:].reset_index()
+                df = df.drop(columns = {"index"})
             
             type_of_Cuenta = []
             for i in list(df["Cuenta"]):
