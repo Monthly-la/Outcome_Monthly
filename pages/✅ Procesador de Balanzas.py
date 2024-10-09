@@ -207,6 +207,9 @@ def process_data(df, option = option):
                     cuenta_corr.append(i[:3] + '00' + i[3:])
                       
             df['Cuenta'] = cuenta_corr
+            print(cuenta_corr)
+            st.markdown(cuenta_corr)
+            st.header(cuenta_corr)
             
             nivel_list = []
             for i in list(df["Cuenta"]):
