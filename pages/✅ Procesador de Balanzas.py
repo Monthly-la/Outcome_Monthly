@@ -209,6 +209,7 @@ def process_data(df, option = option):
             
             # Apply the function to the 'Cuenta' column
             df['Cuenta'] = df['Cuenta'].apply(add_zero_to_code)
+            st.caption(list(df['Cuenta']))
             
             nivel_list = []
             for i in list(df["Cuenta"]):
