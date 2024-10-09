@@ -198,6 +198,17 @@ def process_data(df, option = option):
                 nombre_list.append(n.strip())
             
             df["Nombre"] = nombre_list
+
+            def add_zero_to_code(code):
+                if re.match(r'^\d{3}-\d{2}-\d{4}$', code):
+                    return code[:3] + '0' + code[3:]
+                elif re.match(r'^\d{2}-\d{3}-\d{4}$', code):
+                    return code[:2] + '00' + code[2:]
+                else:
+                    return code
+            
+            # Apply the function to the 'Cuenta' column
+            df['Cuenta'] = df['Cuenta'].apply(add_zero_to_code)
             
             nivel_list = []
             for i in list(df["Cuenta"]):
