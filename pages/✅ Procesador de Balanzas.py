@@ -199,17 +199,14 @@ def process_data(df, option = option):
             
             df["Nombre"] = nombre_list
 
-            def add_zero_to_code(code):
-                if re.match(r'^\d{3}-\d{2}-\d{4}$', code):
-                    return code[:3] + '0' + code[3:]
-                elif re.match(r'^\d{2}-\d{3}-\d{4}$', code):
-                    return code[:2] + '00' + code[2:]
-                else:
-                    return code
-            
-            # Apply the function to the 'Cuenta' column
-            df['Cuenta'] = df['Cuenta'].apply(add_zero_to_code)
-            st.subheader(list(df['Cuenta']))
+            cuenta_corr = []
+            for i in list(df["Cuenta"]):
+                if len(i.split("-")[0]) == 3:
+                    cuenta_corr.append(i[:3] + '0' + i[3:])
+                if len(i.split("-")[0]) == 2:
+                    cuenta_corr.append(i[:3] + '00' + i[3:])
+                      
+            df['Cuenta'] = cuenta_corr
             
             nivel_list = []
             for i in list(df["Cuenta"]):
