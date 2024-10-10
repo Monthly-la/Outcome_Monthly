@@ -202,9 +202,9 @@ def process_data(df, option = option):
             cuenta_corr = []
             for i in list(df["Cuenta"]):
                 if len(i.split("-")[0]) == 3:
-                    cuenta_corr.append(i[:1] + '0' + i[1:])
+                    cuenta_corr.append(i[:2] + '0' + i[2:])
                 elif len(i.split("-")[0]) == 2:
-                    cuenta_corr.append(i[:1] + '00' + i[1:])
+                    cuenta_corr.append(i[:2] + '00' + i[2:])
                 else:
                     cuenta_corr.append(i)
                       
