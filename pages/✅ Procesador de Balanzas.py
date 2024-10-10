@@ -110,7 +110,7 @@ def process_data(df, option = option):
 
 
                 #Outcome Matrix
-
+            
             balance_df = df[(df["Nivel"] == 1) & (df["Clase"] <= 3)][["Cuenta","Nombre","Saldo Neto"]]
             balance_df["Sheet"] = tab
         
@@ -265,7 +265,7 @@ def process_data(df, option = option):
             
             #Outcome Matrix
 
-            balance_df = df[(df["Nivel"] == 2) & (df["Clase"] <= 3)][["Cuenta","Nombre","Saldo Neto"]]
+            balance_df = df[(df["Nivel"] == sorted(set(list(df["Nivel"])))[1] ) & (df["Clase"] <= 3)][["Cuenta","Nombre","Saldo Neto"]]
             balance_df["Sheet"] = tabs_date
 
             inc_statem_df = df[(df["Clase"] > 3)]
