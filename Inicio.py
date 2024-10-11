@@ -66,7 +66,7 @@ with cl_operaciones:
     st.link_button("Sankey", "https://www.sankeyart.com/", use_container_width=True)
     st.link_button("Fillout (Documentos Mensuales)", "https://forms.fillout.com/t/vzB2cu9gHDus", use_container_width=True)
     st.link_button("ChatGPT (Monthly)", "", use_container_width=True)
-    st.link_button("Weekly Pulse (TGIM)", "https://forms.office.com/Pages/DesignPageV2.aspx?origin=NeoPortalPage&subpage=design&id=tk7h7DvZskO0b7FLepIvPWStz4K_-KlJj4uTVyohkktUOU9OMEM3Tk5EQ1NaTUhZQzNYMFBNQjc0VC4u&topview=Prefill", use_container_width=True)
+    st.link_button("Weekly Pulse (TGIM)", "https://forms.office.com/r/TW2JsdSnC5", use_container_width=True)
 
 with cl_postventa:
     st.markdown("<h3 style='text-align: center; color: #5666FF;'> Postventa</h3>", unsafe_allow_html=True)
