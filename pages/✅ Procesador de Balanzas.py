@@ -254,12 +254,12 @@ def process_data(df, option = option):
                 capital= df[(df["Nivel"] == 1) & (df["Clase"] == 3)]["Saldo Neto"].sum()
             elif tipo_contpaqi == 3:
                 activos = df[(df["Nivel"] >= 2) & (df['Nivel'] <= 3) & (df["Clase"] == 1)]["Saldo Neto"].sum()
-                pasivos = df[(df["Nivel"] >= 2) & (df['Nivel'] <= 3) & (df["Clase"] == 1)]["Saldo Neto"].sum()
-                capital= df[(df["Nivel"] >= 2) & (df['Nivel'] <= 3) & (df["Clase"] == 1)]["Saldo Neto"].sum()
+                pasivos = df[(df["Nivel"] >= 2) & (df['Nivel'] <= 3) & (df["Clase"] == 2)]["Saldo Neto"].sum()
+                capital= df[(df["Nivel"] >= 2) & (df['Nivel'] <= 3) & (df["Clase"] == 3)]["Saldo Neto"].sum()
             elif tipo_contpaqi == 2:
                 activos = df[(df["Nivel"] >= 2) & (df['Nivel'] <= 3) & (df["Clase"] == 1)]["Saldo Neto"].sum()
-                pasivos = df[(df["Nivel"] >= 2) & (df['Nivel'] <= 3) & (df["Clase"] == 1)]["Saldo Neto"].sum()
-                capital= df[(df["Nivel"] >= 2) & (df['Nivel'] <= 3) & (df["Clase"] == 1)]["Saldo Neto"].sum()
+                pasivos = df[(df["Nivel"] >= 2) & (df['Nivel'] <= 3) & (df["Clase"] == 2)]["Saldo Neto"].sum()
+                capital= df[(df["Nivel"] >= 2) & (df['Nivel'] <= 3) & (df["Clase"] == 3)]["Saldo Neto"].sum()
 
             utilidad_acum = df[(df["Nivel"] == 1) & (df["Clase"] >= 4)]["Saldo Neto"].sum()
             
