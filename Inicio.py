@@ -33,6 +33,7 @@ with cl_prospeccion:
     st.link_button("Linktree (Monthly)", "https://linktr.ee/monthlyla", use_container_width=True)
     st.link_button("Linktree (Valora)", "https://linktr.ee/valora.la", use_container_width=True)
     st.link_button("Tidycal (Demo)", "https://tidycal.com/jona/monthly-demo-30", use_container_width=True)
+    st.link_button("Calendly", "https://calendly.com/cfo-monthly", use_container_width=True)
     st.link_button("Website (Monthly)", "https://monthly.la/", use_container_width=True)
     st.link_button("Website (Valora)", "https://valora.la/", use_container_width=True)
     st.link_button("Instagram", "https://www.instagram.com/monthly.la/", use_container_width=True)
