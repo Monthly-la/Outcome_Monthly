@@ -199,11 +199,14 @@ def process_data(df, option = option):
             
             df["Nombre"] = nombre_list
 
+            tipo_contpaqi = 4
             cuenta_corr = []
             for i in list(df["Cuenta"]):
                 if len(i.split("-")[0]) == 3:
-                    cuenta_corr.append(i[:2] + '0' + i[2:])
+                    tipo_contpaqi = 3
+                    cuenta_corr.append(i[:3] + '0' + i[3:])
                 elif len(i.split("-")[0]) == 2:
+                    tipo_contpaqi = 2
                     cuenta_corr.append(i[:2] + '00' + i[2:])
                 else:
                     cuenta_corr.append(i)
@@ -244,10 +247,20 @@ def process_data(df, option = option):
             df["Saldo Final Acreedor"] = df["Saldo Final Acreedor"].astype("float")
             
             df["Saldo Neto"] = df["Saldo Final Deudor"] - df["Saldo Final Acreedor"]
-            
-            activos = df[(df["Nivel"] == 1) & (df["Clase"] == 1)]["Saldo Neto"].sum()
-            pasivos = df[(df["Nivel"] == 1) & (df["Clase"] == 2)]["Saldo Neto"].sum()
-            capital= df[(df["Nivel"] == 1) & (df["Clase"] == 3)]["Saldo Neto"].sum()
+
+            if tipo_contpaqi == 4:
+                activos = df[(df["Nivel"] == 1) & (df["Clase"] == 1)]["Saldo Neto"].sum()
+                pasivos = df[(df["Nivel"] == 1) & (df["Clase"] == 2)]["Saldo Neto"].sum()
+                capital= df[(df["Nivel"] == 1) & (df["Clase"] == 3)]["Saldo Neto"].sum()
+            elif tipo_contpaqi == 3:
+                activos = df[(df["Nivel"] >= 2) & (df['Nivel'] <= 3) & (df["Clase"] == 1)]["Saldo Neto"].sum()
+                pasivos = df[(df["Nivel"] >= 2) & (df['Nivel'] <= 3) & (df["Clase"] == 1)]["Saldo Neto"].sum()
+                capital= df[(df["Nivel"] >= 2) & (df['Nivel'] <= 3) & (df["Clase"] == 1)]["Saldo Neto"].sum()
+            elif tipo_contpaqi == 2:
+                activos = df[(df["Nivel"] >= 2) & (df['Nivel'] <= 3) & (df["Clase"] == 1)]["Saldo Neto"].sum()
+                pasivos = df[(df["Nivel"] >= 2) & (df['Nivel'] <= 3) & (df["Clase"] == 1)]["Saldo Neto"].sum()
+                capital= df[(df["Nivel"] >= 2) & (df['Nivel'] <= 3) & (df["Clase"] == 1)]["Saldo Neto"].sum()
+
             utilidad_acum = df[(df["Nivel"] == 1) & (df["Clase"] >= 4)]["Saldo Neto"].sum()
             
             result = round(activos+pasivos+capital+utilidad_acum,1)
