@@ -31,3 +31,6 @@ with header_logo_2:
 
 st.divider()
 
+
+st.data_editor()
+
