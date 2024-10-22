@@ -199,17 +199,26 @@ def process_data(df, option = option):
             
             df["Nombre"] = nombre_list
 
-            tipo_contpaqi = 4
+           
+            tipo_contpaqi == 4
             cuenta_corr = []
             for i in list(df["Cuenta"]):
-                if len(i.split("-")[0]) == 3:
-                    tipo_contpaqi = 3
-                    cuenta_corr.append(i[:3] + '0' + i[3:])
-                elif len(i.split("-")[0]) == 2:
-                    tipo_contpaqi = 2
-                    cuenta_corr.append(i[:2] + '00' + i[2:])
-                else:
-                    cuenta_corr.append(i)
+                if len(i.split("-")[0]) != 4 :
+                    if len(i.split("-")[0]) == 3:
+                        i = i[:3] + '0' + i[3:]
+                
+                if len(i.split("-")[1]) != 2:
+                    if len(i.split("-")[1]) == 4:
+                        i = i[:5] + i[7:]
+                    elif len(i.split("-")[1]) == 3:
+                        i = i[:5] + i[6:]
+                
+                if len(i.split("-")[2]) != 3:
+                    if len(i.split("-")[1]) == 4:
+                        i = i[:7] + i[8:]
+                    elif len(i.split("-")[1]) == 2:
+                        i = i[:7] + '0' + i[7:]
+                cuenta_corr.append(i)
                       
             df['Cuenta'] = cuenta_corr
 
