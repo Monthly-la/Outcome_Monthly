@@ -214,9 +214,9 @@ def process_data(df, option = option):
                         i = i[:5] + i[6:]
                 
                 if len(i.split("-")[2]) != 3:
-                    if len(i.split("-")[1]) == 4:
+                    if len(i.split("-")[2]) == 4:
                         i = i[:7] + i[8:]
-                    elif len(i.split("-")[1]) == 2:
+                    elif len(i.split("-")[2]) == 2:
                         i = i[:7] + '0' + i[7:]
                 cuenta_corr.append(i)
                       
@@ -287,7 +287,7 @@ def process_data(df, option = option):
             
             #Outcome Matrix
 
-            balance_df = df[(df["Nivel"] == sorted(set(list(df["Nivel"])))[1] ) & (df["Clase"] <= 3)][["Cuenta","Nombre","Saldo Neto"]]
+            balance_df = df[(df["Nivel"] == 1) & (df["Clase"] <= 3)][["Cuenta","Nombre","Saldo Neto"]]
             balance_df["Sheet"] = tabs_date
 
             inc_statem_df = df[(df["Clase"] > 3)]
