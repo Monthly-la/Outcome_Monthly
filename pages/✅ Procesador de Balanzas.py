@@ -256,9 +256,9 @@ def process_data(df, option = option):
             df["Saldo Neto"] = df["Saldo Final Deudor"] - df["Saldo Final Acreedor"]
 
             if tipo_contpaqi == 4:
-                activos = df[(df["Nivel"] == 2) & (df["Clase"] == 1)]["Saldo Neto"].sum()
-                pasivos = df[(df["Nivel"] == 2) & (df["Clase"] == 2)]["Saldo Neto"].sum()
-                capital= df[(df["Nivel"] == 2) & (df["Clase"] == 3)]["Saldo Neto"].sum()
+                activos = df[(df["Nivel"] == 1) & (df["Clase"] == 1)]["Saldo Neto"].sum()
+                pasivos = df[(df["Nivel"] == 1) & (df["Clase"] == 2)]["Saldo Neto"].sum()
+                capital= df[(df["Nivel"] == 1) & (df["Clase"] == 3)]["Saldo Neto"].sum()
             elif tipo_contpaqi == 3:
                 activos = df[(df["Nivel"] >= 2) & (df['Nivel'] <= 3) & (df["Clase"] == 1)]["Saldo Neto"].sum()
                 pasivos = df[(df["Nivel"] >= 2) & (df['Nivel'] <= 3) & (df["Clase"] == 2)]["Saldo Neto"].sum()
@@ -285,7 +285,7 @@ def process_data(df, option = option):
             
             #Outcome Matrix
 
-            balance_df = df[(df["Nivel"] == 1) & (df["Clase"] <= 3)][["Cuenta","Nombre","Saldo Neto"]]
+            balance_df = df[(df["Nivel"] == 2) & (df["Clase"] <= 3)][["Cuenta","Nombre","Saldo Neto"]]
             balance_df["Sheet"] = tabs_date
 
             inc_statem_df = df[(df["Clase"] > 3)]
