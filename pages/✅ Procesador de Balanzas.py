@@ -219,6 +219,8 @@ def process_data(df, option = option):
                         i = i[:7] + '0' + i[7:]
                 cuenta_corr.append(i)
             
+            df['Cuenta'] = cuenta_corr
+            
             nivel_list = []
             for i in list(df["Cuenta"]):
                 if (i.split("-")[2] == '000'):
