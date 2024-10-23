@@ -200,7 +200,7 @@ def process_data(df, option = option):
             df["Nombre"] = nombre_list
 
            
-            tipo_contpaqi = 4
+            tipo_contpaqi = 423
             cuenta_corr = []
             for i in list(df["Cuenta"]):
                 if len(i.split("-")[0]) != 4 :
@@ -256,9 +256,9 @@ def process_data(df, option = option):
             df["Saldo Neto"] = df["Saldo Final Deudor"] - df["Saldo Final Acreedor"]
 
             if tipo_contpaqi == 4:
-                activos = df[(df["Nivel"] == 1) & (df["Clase"] == 1)]["Saldo Neto"].sum()
-                pasivos = df[(df["Nivel"] == 1) & (df["Clase"] == 2)]["Saldo Neto"].sum()
-                capital= df[(df["Nivel"] == 1) & (df["Clase"] == 3)]["Saldo Neto"].sum()
+                activos = df[(df["Nivel"] == 2) & (df["Clase"] == 1)]["Saldo Neto"].sum()
+                pasivos = df[(df["Nivel"] == 2) & (df["Clase"] == 2)]["Saldo Neto"].sum()
+                capital= df[(df["Nivel"] == 2) & (df["Clase"] == 3)]["Saldo Neto"].sum()
             elif tipo_contpaqi == 3:
                 activos = df[(df["Nivel"] >= 2) & (df['Nivel'] <= 3) & (df["Clase"] == 1)]["Saldo Neto"].sum()
                 pasivos = df[(df["Nivel"] >= 2) & (df['Nivel'] <= 3) & (df["Clase"] == 2)]["Saldo Neto"].sum()
