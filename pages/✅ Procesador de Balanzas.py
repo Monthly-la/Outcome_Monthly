@@ -206,7 +206,6 @@ def process_data(df, option = option):
                 if len(i.split("-")[0]) != 4 :
                     if len(i.split("-")[0]) == 3:
                         i = i[:3] + '0' + i[3:]
-                
                 if len(i.split("-")[1]) != 2:
                     if len(i.split("-")[1]) == 4:
                         i = i[:5] + i[7:]
@@ -215,13 +214,10 @@ def process_data(df, option = option):
                 
                 if len(i.split("-")[2]) != 3:
                     if len(i.split("-")[2]) == 4:
-                        i = i[:7] + i[8:]
+                        i = i[:7] + "-" + i[9:]
                     elif len(i.split("-")[2]) == 2:
                         i = i[:7] + '0' + i[7:]
                 cuenta_corr.append(i)
-                      
-            df['Cuenta'] = cuenta_corr
-
             
             nivel_list = []
             for i in list(df["Cuenta"]):
