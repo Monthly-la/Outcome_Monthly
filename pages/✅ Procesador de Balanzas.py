@@ -200,7 +200,7 @@ def process_data(df, option = option):
             df["Nombre"] = nombre_list
 
            
-            tipo_contpaqi = 423
+            tipo_contpaqi = 4
             cuenta_corr = []
             for i in list(df["Cuenta"]):
                 if len(i.split("-")[0]) != 4 :
