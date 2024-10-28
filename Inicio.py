@@ -9,7 +9,7 @@ st.set_page_config(
 header_logo_1, header_logo_2 = st.columns(2)
 with header_logo_1:
     st.image(
-                "https://monthly.la/wp-content/uploads/2024/02/Monthly-Logo.png",
+                "Logo. Monthly Oficial.png",
                 width=200, # Manually Adjust the width of the image as per requirement
             )
 with header_logo_2:
