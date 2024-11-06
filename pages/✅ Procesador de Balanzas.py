@@ -270,7 +270,7 @@ def process_data(df, option = option):
             
             for i in list(df["Cuenta"]):
                 cuenta_corr.append(normalize_id(i))
-                nivel_list.appned(determine_nivel(i))
+                nivel_list.append(determine_nivel(i))
 
         
             df['Cuenta'] = cuenta_corr
