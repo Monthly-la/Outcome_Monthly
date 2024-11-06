@@ -313,7 +313,7 @@ def process_data(df, option = option):
             st.divider()
             
             #Outcome Matrix
-            lowest = set(list(df["Nivel"] <= 3))
+            lowest = set(list(df["Nivel"]))
             st.markdown(lowest)
             balance_df = df[(df["Nivel"] == 2) & (df["Clase"] <= 3)][["Cuenta","Nombre","Saldo Neto"]]
             balance_df["Sheet"] = tabs_date
