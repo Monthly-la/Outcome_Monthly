@@ -333,7 +333,8 @@ def process_data(df, option = option):
                 if len(detalle_nivel_df[detalle_nivel_df["Cuenta"] >= 2]) > 0:
                     nivel_deseado.append([c, max(detalle_nivel_df[detalle_nivel_df["Cuenta"] >= 2]["Nivel"])])
                 else:
-                    nivel_deseado.append([c, 1])   
+                    nivel_deseado.append([c, 1])
+                    
             nivel_deseado_df = pd.DataFrame(nivel_deseado, columns = ["Cuenta General", "Nivel Deseado"])
             
             detalle_deseado_df = detalle_df.merge(nivel_deseado_df, on = "Cuenta General", how = "left")[["Cuenta General", "Nivel Deseado"]].drop_duplicates()
