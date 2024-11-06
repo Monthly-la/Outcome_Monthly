@@ -348,8 +348,8 @@ def process_data(df, option = option):
             
             inc_statem_df = inc_statem_df[inc_statem_df["Nivel"] == inc_statem_df["Nivel Deseado"]]
 
-            #if len(inc_statem_df) > 1:
-            #    inc_statem_df = inc_statem_df[inc_statem_df["Nivel Deseado"] != 1]
+            if len(inc_statem_df) > 1:
+                inc_statem_df = inc_statem_df[inc_statem_df["Nivel"] != 1]
             
             inc_statem_df = inc_statem_df[["Cuenta", "Nombre", "Saldo Neto"]]
             inc_statem_df["Sheet"] = tabs_date
