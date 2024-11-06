@@ -337,8 +337,8 @@ def process_data(df, option = option):
                     
             nivel_deseado_df = pd.DataFrame(nivel_deseado, columns = ["Cuenta General", "Nivel Deseado"])
 
-            if (len(nivel_deseado_df) != 1) & (len(nivel_deseado_df[nivel_deseado_df["Cuenta General"] % 10]) == 1):
-                nivel_deseado_df = nivel_deseado_df[~nivel_deseado_df["Cuenta General"] % 10]
+            if (len(nivel_deseado_df) != 1) & (len(nivel_deseado_df[nivel_deseado_df["Cuenta General"] % 10 == 0]) == 1):
+                nivel_deseado_df = nivel_deseado_df[~nivel_deseado_df["Cuenta General"] % 10 == 0]
                 
             
             detalle_deseado_df = detalle_df.merge(nivel_deseado_df, on = "Cuenta General", how = "left")[["Cuenta General", "Nivel Deseado"]].drop_duplicates()
