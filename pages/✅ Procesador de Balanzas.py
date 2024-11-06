@@ -339,7 +339,7 @@ def process_data(df, option = option):
             detalle_deseado_df = detalle_df.merge(nivel_deseado_df, on = "Cuenta General", how = "left")[["Cuenta General", "Nivel Deseado"]].drop_duplicates()
             
             inc_statem_df = inc_statem_df.merge(detalle_deseado_df, on = "Cuenta General", how = "left")
-            inc_statem_df = inc_statem_df[inc_statem_df["Nivel"] != 1)]
+            inc_statem_df = inc_statem_df[inc_statem_df["Nivel"] != 1]
             inc_statem_df["Saldo Neto"] = df["Cargos"] - df["Abonos"]
             
             inc_statem_df = inc_statem_df[inc_statem_df["Nivel"] == inc_statem_df["Nivel Deseado"]]
