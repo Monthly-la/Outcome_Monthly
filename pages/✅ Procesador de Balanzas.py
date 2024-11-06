@@ -338,8 +338,6 @@ def process_data(df, option = option):
                     
             nivel_deseado_df = pd.DataFrame(nivel_deseado, columns = ["Cuenta General", "Nivel Deseado"])
 
-            #if (len(nivel_deseado_df) != 1) & (len(nivel_deseado_df[nivel_deseado_df["Cuenta General"] % 10 == 0]) == 1):
-            #    nivel_deseado_df = nivel_deseado_df[~nivel_deseado_df["Cuenta General"] % 10 == 0]
                 
             
             detalle_deseado_df = detalle_df.merge(nivel_deseado_df, on = "Cuenta General", how = "left")[["Cuenta General", "Nivel Deseado"]].drop_duplicates()
@@ -349,6 +347,10 @@ def process_data(df, option = option):
             inc_statem_df["Saldo Neto"] = df["Cargos"] - df["Abonos"]
             
             inc_statem_df = inc_statem_df[inc_statem_df["Nivel"] == inc_statem_df["Nivel Deseado"]]
+
+            if len(inc_statem_df) > 1:
+                inc_statem_df = inc_statem_df[inc_statem_df["Cuenta General"].to_numeric() % 10 != 0]
+            
             inc_statem_df = inc_statem_df[["Cuenta", "Nombre", "Saldo Neto"]]
             inc_statem_df["Sheet"] = tabs_date
 
