@@ -199,49 +199,83 @@ def process_data(df, option = option):
             
             df["Nombre"] = nombre_list
 
-           
-            tipo_contpaqi = 4
-            cuenta_corr = []
-            for i in list(df["Cuenta"]):
-                if len(i.split("-")[0]) != 4 :
-                    if len(i.split("-")[0]) == 3:
-                        i = i[:3] + '0' + i[3:]
-                if len(i.split("-")[1]) != 2:
-                    if len(i.split("-")[1]) == 4:
-                        i = i[:5] + i[7:]
-                    elif len(i.split("-")[1]) == 3:
-                        i = i[:5] + i[6:]
-                
-                if len(i.split("-")[2]) != 3:
-                    if len(i.split("-")[2]) == 4:
-                        i = i[:7] + "-" + i[9:]
-                    elif len(i.split("-")[2]) == 2:
-                        i = i[:7] + '0' + i[7:]
-                cuenta_corr.append(i)
-            
-            df['Cuenta'] = cuenta_corr
             
             nivel_list = []
+            # Function to normalize ID by filling missing digits and sections
+            def normalize_id(id_code):
+                # Split the ID by hyphens
+                sections = id_code.split('-')
+                
+                # Pad each section with zeros to ensure each section has exactly 4 digits
+                padded_sections = [section.ljust(4, '0') for section in sections]
+                
+                # Ensure there are exactly 4 sections by appending "-0000" sections if needed
+                while len(padded_sections) < 4:
+                    padded_sections.append('0000')
+                
+                # Join the normalized sections with hyphens
+                return '-'.join(padded_sections)
+            
+            # Function to determine the level based on the normalized ID
+            def determine_nivel(id_code):
+                # Normalize the ID first
+                normalized_id = normalize_id(id_code)
+                
+                # Define patterns with corresponding levels
+                patterns = {
+                    r'^[1-9]\d{3}-0000-0000-0000$': 1,
+                    r'^0[1-9]\d{2}-0000-0000-0000$': 2,
+                    r'^[1-9][1-9]\d{2}-0000-0000-0000$': 2,
+                    r'^00[1-9]0-0000-0000-0000$': 3,
+                    r'^[1-9]0[1-9]0-0000-0000-0000$': 3,
+                    r'^[1-9][1-9][1-9]0-0000-0000-0000$': 3,
+                    r'^[1-9][1-9]0[1-9]-0000-0000-0000$': 3,
+                    r'^[1-9]{4}-0000-0000-0000$': 3,
+                    r'^\d{4}-[1-9]000-0000-0000$': 4,
+                    r'^\d{4}-0[1-9]00-0000-0000$': 5,
+                    r'^\d{4}-[1-9][1-9]00-0000-0000$': 5,
+                    r'^\d{4}-00[1-9]0-0000-0000$': 6,
+                    r'^\d{4}-[1-9]0[1-9]0-0000-0000$': 6,
+                    r'^\d{4}-[1-9]{3}0-0000-0000$': 6,
+                    r'^\d{4}-[1-9][1-9]0[1-9]-0000-0000$': 6,
+                    r'^\d{4}-[1-9]{4}-0000-0000$': 6,
+                    r'^\d{4}-\d{4}-[1-9]000-0000$': 7,
+                    r'^\d{4}-\d{4}-0[1-9]00-0000$': 8,
+                    r'^\d{4}-\d{4}-[1-9][1-9]00-0000$': 8,
+                    r'^\d{4}-\d{4}-00[1-9]0-0000$': 9,
+                    r'^\d{4}-\d{4}-[1-9]0[1-9]0-0000$': 9,
+                    r'^\d{4}-\d{4}-[1-9]{3}0-0000$': 9,
+                    r'^\d{4}-\d{4}-[1-9][1-9]0[1-9]-0000$': 9,
+                    r'^\d{4}-\d{4}-[1-9]{4}-0000$': 9,
+                    r'^\d{4}-\d{4}-\d{4}-[1-9]000$': 10,
+                    r'^\d{4}-\d{4}-\d{4}-0[1-9]00$': 11,
+                    r'^\d{4}-\d{4}-\d{4}-[1-9][1-9]00$': 11,
+                    r'^\d{4}-\d{4}-\d{4}-00[1-9]0$': 12,
+                    r'^\d{4}-\d{4}-\d{4}-[1-9]0[1-9]0$': 12,
+                    r'^\d{4}-\d{4}-\d{4}-[1-9]{3}0$': 12,
+                    r'^\d{4}-\d{4}-\d{4}-[1-9][1-9]0[1-9]$': 12,
+                    r'^\d{4}-\d{4}-\d{4}-[1-9]{4}$': 12,
+                }
+                
+                # Check the patterns and return the level if matched
+                for pattern, level in patterns.items():
+                    if re.match(pattern, normalized_id):
+                        return level
+                return None  # Return None if no pattern matches
+
+
+            # Print results
+            nivel_list = []
+            cuenta_corr = []
+            
             for i in list(df["Cuenta"]):
-                if (i.split("-")[2] == '000'):
-                    if ((i.split("-")[1] == '00') or (i.split("-")[1] == '000')) and (i.split("-")[2] == '000'):
-                        if (i.split("-")[0][-1:] == '0') and ((i.split("-")[1] == '00') or (i.split("-")[1] == '000')) and (i.split("-")[2] == '000'):
-                            if (i.split("-")[0][-2:] == '00') and ((i.split("-")[1] == '00') or (i.split("-")[1] == '000')) and (i.split("-")[2] == '000'):
-                                if (i.split("-")[0][-3:] == '000') and ((i.split("-")[1] == '00') or (i.split("-")[1] == '000')) and (i.split("-")[2] == '000'):
-                                    nivel_list.append(1)
-                                else:
-                                    nivel_list.append(2)
-                            else:
-                                nivel_list.append(3)
-                        else:
-                            nivel_list.append(4)
-                    else:
-                        nivel_list.append(5)
-                else:
-                    nivel_list.append(6)
-            
-            
+                cuenta_corr.append(normalize_id(i))
+                nivel_list.appned(determine_nivel(i))
+
+        
+            df['Cuenta'] = cuenta_corr
             df["Nivel"] = nivel_list
+            
             class_of_cuenta = []
             for i in list(df["Cuenta"]):
                 class_of_cuenta.append(i[0])
@@ -255,18 +289,10 @@ def process_data(df, option = option):
             
             df["Saldo Neto"] = df["Saldo Final Deudor"] - df["Saldo Final Acreedor"]
 
-            if tipo_contpaqi == 4:
-                activos = df[(df["Nivel"] == 1) & (df["Clase"] == 1)]["Saldo Neto"].sum()
-                pasivos = df[(df["Nivel"] == 1) & (df["Clase"] == 2)]["Saldo Neto"].sum()
-                capital= df[(df["Nivel"] == 1) & (df["Clase"] == 3)]["Saldo Neto"].sum()
-            elif tipo_contpaqi == 3:
-                activos = df[(df["Nivel"] >= 2) & (df['Nivel'] <= 3) & (df["Clase"] == 1)]["Saldo Neto"].sum()
-                pasivos = df[(df["Nivel"] >= 2) & (df['Nivel'] <= 3) & (df["Clase"] == 2)]["Saldo Neto"].sum()
-                capital= df[(df["Nivel"] >= 2) & (df['Nivel'] <= 3) & (df["Clase"] == 3)]["Saldo Neto"].sum()
-            elif tipo_contpaqi == 2:
-                activos = df[(df["Nivel"] >= 2) & (df['Nivel'] <= 3) & (df["Clase"] == 1)]["Saldo Neto"].sum()
-                pasivos = df[(df["Nivel"] >= 2) & (df['Nivel'] <= 3) & (df["Clase"] == 2)]["Saldo Neto"].sum()
-                capital= df[(df["Nivel"] >= 2) & (df['Nivel'] <= 3) & (df["Clase"] == 3)]["Saldo Neto"].sum()
+            activos = df[(df["Nivel"] == 1) & (df["Clase"] == 1)]["Saldo Neto"].sum()
+            pasivos = df[(df["Nivel"] == 1) & (df["Clase"] == 2)]["Saldo Neto"].sum()
+            capital= df[(df["Nivel"] == 1) & (df["Clase"] == 3)]["Saldo Neto"].sum()
+
 
             utilidad_acum = df[(df["Nivel"] == 1) & (df["Clase"] >= 4)]["Saldo Neto"].sum()
             
