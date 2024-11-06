@@ -321,7 +321,7 @@ def process_data(df, option = option):
             general = []
 
             for i in inc_statem_df["Cuenta"]:
-                general.append(i[:4])
+                general.append(i[:2])
             inc_statem_df["Cuenta General"] = general
             
             detalle_df = inc_statem_df.groupby(by = ["Cuenta General", "Nivel"])["Cuenta",].count().reset_index()
@@ -331,7 +331,7 @@ def process_data(df, option = option):
                 detalle_nivel_df = detalle_df[(detalle_df["Cuenta General"] == c)]
                 
                 if len(detalle_nivel_df[detalle_nivel_df["Cuenta"] >= 2]) > 0:
-                    nivel_deseado.append([c, max(detalle_nivel_df[detalle_nivel_df["Cuenta"] >= 2]["Nivel"])])
+                    nivel_deseado.append([c, min(detalle_nivel_df[detalle_nivel_df["Cuenta"] >= 2]["Nivel"])])
                 else:
                     nivel_deseado.append([c, 1])
                     
