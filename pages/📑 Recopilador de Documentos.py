@@ -1,6 +1,7 @@
 import streamlit as st
 from io import BytesIO
 import openpyxl
+from openpyxl.styles import Font, Border, Fill, Alignment, Protection
 
 st.set_page_config(
     page_title="Monthly - App Interna",
@@ -34,23 +35,27 @@ def merge_excel_files(excel_files):
     for uploaded_file in excel_files:
         # Load the uploaded workbook
         wb = openpyxl.load_workbook(uploaded_file)
-        
+
         for sheet_name in wb.sheetnames:
             sheet = wb[sheet_name]
-            
-            # Copy the sheet to the new workbook
-            new_sheet = merged_wb.create_sheet(title=sheet_name)
+
+            # Create a new sheet in the merged workbook
+            new_sheet = merged_wb.create_sheet(title=sheet_name[:31])  # Sheet names are limited to 31 chars
             
             for row in sheet.iter_rows():
                 for cell in row:
                     new_cell = new_sheet.cell(row=cell.row, column=cell.column, value=cell.value)
-                    if cell.has_style:
-                        new_cell.font = cell.font
-                        new_cell.border = cell.border
-                        new_cell.fill = cell.fill
+
+                    # Copy styles safely
+                    try:
+                        new_cell.font = cell.font.copy() if cell.font else None
+                        new_cell.border = cell.border.copy() if cell.border else None
+                        new_cell.fill = cell.fill.copy() if cell.fill else None
                         new_cell.number_format = cell.number_format
-                        new_cell.protection = cell.protection
-                        new_cell.alignment = cell.alignment
+                        new_cell.protection = cell.protection.copy() if cell.protection else None
+                        new_cell.alignment = cell.alignment.copy() if cell.alignment else None
+                    except Exception as e:
+                        print(f"Error copying styles in cell {cell.coordinate}: {e}")
 
     # Save the final workbook
     merged_wb.save(output)
