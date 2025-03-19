@@ -407,7 +407,7 @@ def process_data(df, option = option):
             inc_statem_df = inc_statem_df.merge(detalle_deseado_df, on = "Cuenta General", how = "left")
 
             inc_statem_df["Saldo Neto"] = df["Cargos"] - df["Abonos"]
-            inc_statem_df = inc_statem_df[(inc_statem_df["Nivel"] == inc_statem_df["Nivel Deseado"])]
+            inc_statem_df = inc_statem_df[(inc_statem_df["Nivel"] <= inc_statem_df["Nivel Deseado"]) & (inc_statem_df["Nivel"] >= inc_statem_df["Nivel Deseado"] - 1)]
             #inc_statem_df = inc_statem_df[(inc_statem_df["Nivel"] <= inc_statem_df["Nivel Deseado"] + 3) & (inc_statem_df["Nivel"] > 1)]
 
             #if len(inc_statem_df) > 1:
