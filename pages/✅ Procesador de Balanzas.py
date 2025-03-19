@@ -391,7 +391,10 @@ def process_data(df, option = option):
                 detalle_nivel_df = detalle_df[(detalle_df["Cuenta General"] == c)]
                 
                 if len(detalle_nivel_df[detalle_nivel_df["Cuenta"] >= 2]) > 0:
-                    nivel_deseado.append([c, max(detalle_nivel_df[detalle_nivel_df["Cuenta"] >= 2]["Nivel"])])
+                    if len(detalle_nivel_df[detalle_nivel_df["Cuenta"] <= 30]) > 0:
+                        nivel_deseado.append([c, max(detalle_nivel_df[detalle_nivel_df["Cuenta"] >= 2]["Nivel"])])
+                    else:
+                        nivel_deseado.append([c, max(detalle_nivel_df[detalle_nivel_df["Cuenta"] >= 2]["Nivel"])-1])
                 else:
                     nivel_deseado.append([c, 1])
                     
