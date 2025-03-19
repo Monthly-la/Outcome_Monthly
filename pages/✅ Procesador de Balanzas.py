@@ -210,6 +210,7 @@ def process_data(df, option = option):
 
         for tab in tabs:
             df = pd.read_excel(uploaded_file, sheet_name = tab)
+            df["Bold"] = df.index.isin(bold_cells_per_sheet[tab]).astype(int)
             tabs_date = df["CONTPAQ i"].iloc[0][-8:]
             tabs_dates.append(tabs_date)
             df = df.fillna(0)
@@ -345,7 +346,7 @@ def process_data(df, option = option):
             df["Class"] = class_of_cuenta
             df["Class"] = df["Class"].astype("int")
             
-            df.columns = ["Cuenta", "Nombre", "Saldo Inicial Deudor", "Saldo Inicial Acreedor", "Cargos", "Abonos", "Saldo Final Deudor", "Saldo Final Acreedor", "Tipo", "Nivel", "Clase"]
+            df.columns = ["Cuenta", "Nombre", "Saldo Inicial Deudor", "Saldo Inicial Acreedor", "Cargos", "Abonos", "Saldo Final Deudor", "Saldo Final Acreedor", "Bold", "Tipo", "Nivel", "Clase"]
             df["Saldo Final Deudor"] = df["Saldo Final Deudor"].astype("float")
             df["Saldo Final Acreedor"] = df["Saldo Final Acreedor"].astype("float")
             
@@ -372,7 +373,7 @@ def process_data(df, option = option):
             st.divider()
             
             #Outcome Matrix
-            balance_df = df[(df["Nivel"] <= 3) & (df["Clase"] <= 3)][["Cuenta","Nombre","Saldo Neto"]]
+            balance_df = df[(df["Bold"] == 1) & (df["Clase"] <= 3)][["Cuenta","Nombre","Saldo Neto"]]
             balance_df["Sheet"] = tabs_date
 
             inc_statem_df = df[(df["Clase"] > 3)]
