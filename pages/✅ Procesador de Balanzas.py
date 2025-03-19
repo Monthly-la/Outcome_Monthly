@@ -405,7 +405,7 @@ def process_data(df, option = option):
 
             inc_statem_df["Saldo Neto"] = df["Cargos"] - df["Abonos"]
             
-            inc_statem_df = inc_statem_df[inc_statem_df["Nivel"] <= inc_statem_df["Nivel Deseado"] + 1]
+            inc_statem_df = inc_statem_df[inc_statem_df["Nivel"] <= inc_statem_df["Nivel Deseado"] + 2]
 
             #if len(inc_statem_df) > 1:
             #    inc_statem_df = inc_statem_df[inc_statem_df["Nivel"] != 1]
