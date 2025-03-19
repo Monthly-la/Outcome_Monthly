@@ -5,6 +5,7 @@ import pyexcel as p
 import pandas as pd
 from io import BytesIO
 import re
+from openpyxl import load_workbook
 
 
 st.set_page_config(
@@ -175,6 +176,36 @@ def process_data(df, option = option):
         tabs_dates = []
 
         outcome_df = pd.DataFrame(["","","",""], ["Cuenta", "Nombre", "Saldo Neto", "Sheet"]).T
+
+        wb = load_workbook(uploaded_file)
+        ws = wb.active  # Assuming we work with the first sheet
+        
+        # Check which cells in column A have bold formatting
+        bold_cells = []
+        for row in ws.iter_rows(min_col=1, max_col=1, min_row=1, values_only=False):
+            for cell in row:
+                if cell.font and cell.font.bold:
+                    bold_cells.append(cell.coordinate)
+        
+        
+        # Initialize a dictionary to store bold cells for each sheet
+        bold_cells_per_sheet = {}
+        
+        # Iterate over all sheets in the workbook
+        for sheet_name in wb.sheetnames:
+            ws = wb[sheet_name]  # Select the sheet
+            bold_cells = []
+        
+            for row in ws.iter_rows(min_col=1, max_col=1, min_row=1, values_only=False):
+                for cell in row:
+                    if cell.font and cell.font.bold:
+                        bold_cells.append(cell.coordinate)
+            
+            bold_cells = [y.replace('A', '') for y in bold_cells]
+            bold_cells = list(map(int, bold_cells))
+            bold_cells = [x - 2 for x in bold_cells]
+            bold_cells_per_sheet[sheet_name] = bold_cells
+        
 
 
         for tab in tabs:
