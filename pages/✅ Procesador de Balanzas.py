@@ -391,7 +391,7 @@ def process_data(df, option = option):
                 detalle_nivel_df = detalle_df[(detalle_df["Cuenta General"] == c)]
                 
                 if len(detalle_nivel_df[detalle_nivel_df["Cuenta"] >= 2]) > 0:
-                    nivel_deseado.append([c, min(detalle_nivel_df[detalle_nivel_df["Cuenta"] >= 2]["Nivel"])])
+                    nivel_deseado.append([c, max(detalle_nivel_df[detalle_nivel_df["Cuenta"] >= 2]["Nivel"])-1])
                 else:
                     nivel_deseado.append([c, 1])
                     
@@ -404,7 +404,7 @@ def process_data(df, option = option):
             inc_statem_df = inc_statem_df.merge(detalle_deseado_df, on = "Cuenta General", how = "left")
 
             inc_statem_df["Saldo Neto"] = df["Cargos"] - df["Abonos"]
-            inc_statem_df = inc_statem_df[(inc_statem_df["Nivel"] <= inc_statem_df["Nivel Deseado"] + 5)]
+            inc_statem_df = inc_statem_df[(inc_statem_df["Nivel"] == inc_statem_df["Nivel Deseado"])]
             #inc_statem_df = inc_statem_df[(inc_statem_df["Nivel"] <= inc_statem_df["Nivel Deseado"] + 3) & (inc_statem_df["Nivel"] > 1)]
 
             #if len(inc_statem_df) > 1:
