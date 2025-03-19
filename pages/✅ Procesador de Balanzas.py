@@ -396,7 +396,7 @@ def process_data(df, option = option):
                     else:
                         nivel_deseado.append([c, max(detalle_nivel_df[detalle_nivel_df["Cuenta"] >= 2]["Nivel"])-1])
                 else:
-                    nivel_deseado.append([c, 1])
+                    nivel_deseado.append([c, 2])
                     
             nivel_deseado_df = pd.DataFrame(nivel_deseado, columns = ["Cuenta General", "Nivel Deseado"])
 
