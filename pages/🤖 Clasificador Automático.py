@@ -233,6 +233,9 @@ if uploaded_file is not None:
             clasificacion_seccion_df["SECCIÓN (MONTHLY WAY) - Full"] = section_full_list
             clasificacion_seccion_df["ID-CATEGORÍA - Full"] = "ES-MONTHLY"
             clasificacion_seccion_df["SECCIÓN - Full"] = section_code_full_list
+            
+            final_df = clasificacion_seccion_df[ ~( ((clasificacion_seccion_df["SECCIÓN - Full"] == "Costo") & (clasificacion_seccion_df["Clase"] >= 6)) | ((clasificacion_seccion_df["SECCIÓN - Full"] == "Gasto") & (clasificacion_seccion_df["Clase"] < 6)) ) ]
+
 
             
-            st.write(clasificacion_seccion_df)
+            st.write(final_df)
