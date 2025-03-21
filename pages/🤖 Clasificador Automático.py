@@ -4,6 +4,8 @@ import os
 from openai import OpenAI
 import numpy as np
 import re
+from openpyxl import load_workbook
+
 
 
 
@@ -53,66 +55,38 @@ if uploaded_file is not None:
     if clicked:
 
         with st.spinner("Generando Clasificaciones:"):
-            # Ensure the CSV has the correct column name
-
-            activos_cat = ["Efectivo y bancos", "Inventario", "Clientes", "Impuestos por cobrar", "Cuentas por cobrar", "Anticipo a proveedores",
-          "Activos fijos", "Activos intangibles", "Otros activos a largo plazo", "Depreciación acumulada", "Amortización acumulada"]
-            # Lista de categorías que representan los diferentes tipos de activos de una empresa, con el estándar "Monthly Way".
+            catalogo_df = pd.read_excel("Categorizador 2025.xlsx")
+            catalogo_df = catalogo_df.iloc[:-1]
+            catalogo_df_clean = catalogo_df.fillna(0)
+            catalogo_df_clean["Código"] = catalogo_df_clean["Código"].astype(float)
+            catalogo_df_clean = catalogo_df_clean.sort_values(by = "Código", ascending = True)
+            catalogo_df_clean["Código"] = catalogo_df_clean["Código"].astype(str)
+            catalogo_df_clean["Clase"] = catalogo_df_clean["Código"].str[0].astype(int)
+            catalogo_df_clean["CATEGORÍA (MONTHLY WAY)"] = catalogo_df_clean["Categoría"].astype(str).str[0:3]
             
-            pasivos_capital_cat = ["Proveedores", "Impuestos por pagar", "Anticipo de clientes", "Cuentas por pagar", "Deuda a corto plazo", "Deuda a largo plazo",
-                     "Otros pasivos a largo plazo", "Capital de accionistas", "Dividendos pagados", "Utilidades retenidas"]
-            # Lista de categorías relacionadas con pasivos y capital, con el estándar "Monthly Way".
+            clases = [1,2,3,5,6,7,8]
+            monthly_cat_clase = catalogo_df_clean[["Clase", "Cuenta", "CATEGORÍA (MONTHLY WAY)", "Categoría",	"Sección", "ID"]]
+            monthly_cat_clase["Categoría"] = monthly_cat_clase["Categoría"].astype(str).str[4:]
+            monthly_cat_clase = monthly_cat_clase.drop_duplicates()
+            monthly_cat_clase = monthly_cat_clase[monthly_cat_clase["Sección"] != "-"]
+            monthly_cat_clase = monthly_cat_clase[monthly_cat_clase["Clase"].isin(clases)]
 
+            #Catálogo de Ingresos
             seccion_cat = pd.read_excel("Monthly - Catalogo.xlsx", sheet_name = "Categorización de clientes")
-            # Importa únicamente la hoja llamada "Categorización de clientes" de "Monthly - Catalogo.xlsx" y la guarda en un nuevo DataFrame llamado seccion_cat.
-            
-            seccion_cat = seccion_cat[seccion_cat["ID-CATEGORÍA"] == "ES-MONTHLY"]
-            # Filtra seccion_cat para quedarse solo con las filas donde el valor de la columna "ID-CATEGORÍA" sea "ES-MONTHLY".
-            # Esto para seleccionar las categorías específicas del estándar "Monthly Way".
-            
-            seccion_catseccion_cat = pd.read_excel("Monthly - Catalogo.xlsx", sheet_name = "Categorización de clientes")
-            # Importa únicamente la hoja llamada "Categorización de clientes" de "Monthly - Catalogo.xlsx" y la guarda en un nuevo DataFrame llamado seccion_cat.
-            
-            seccion_cat = seccion_cat[seccion_cat["ID-CATEGORÍA"] == "ES-MONTHLY"]
-            # Filtra seccion_cat para quedarse solo con las filas donde el valor de la columna "ID-CATEGORÍA" sea "ES-MONTHLY".
-            # Esto para seleccionar las categorías específicas del estándar "Monthly Way".
+            seccion_cat = seccion_cat[seccion_cat["SECCIÓN (MONTHLY WAY)"] == "(a)"]
+            seccion_cat = seccion_cat[seccion_cat["ID-CATEGORÍA"] != "ES-PERSONAL"]
+            seccion_cat = seccion_cat.rename(columns = {"CATEGORÍA (MONTHLY WAY)": "Cuenta","SECCIÓN (MONTHLY WAY)": "CATEGORÍA (MONTHLY WAY)", "SECCIÓN":"Sección", "ID-CATEGORÍA":"ID" })
+            seccion_cat["Categoría"] = "Ingreso"
+            seccion_cat["Clase"] = 4
+            seccion_cat = seccion_cat[["Clase", "Cuenta", "CATEGORÍA (MONTHLY WAY)", "Categoría", "Sección", "ID"]].drop_duplicates()
 
-            seccion_cat[["SECCIÓN (MONTHLY WAY)", "SECCIÓN"]].drop_duplicates()
-            # Se selecionan las columnas "SECCIÓN (MONTHLY WAY)" (nueva sección categorizada según el estándar Monthly Way), y "SECCIÓN" (sección original).
-            # También se eliminan filas duplicadas en el subconjunto de columnas seleccionado para asegurar que cada combinación única de ambas columnas aparezca una sola vez.
-            
-            # El propósito de esta celda es obtener un listado único de pares entre la sección original ("SECCIÓN") y la sección categorizada ("SECCIÓN (MONTHLY WAY)") en el sistema Monthly Way.
-            # Esto puede ser útil para identificar cómo las secciones originales han sido reclasificadas o agrupadas en el nuevo esquema.
-            seccion_v_balanza_df = pd.read_excel("Monthly - Catalogo.xlsx", sheet_name = "Sección contra Balanza").fillna("").melt(id_vars=["SECCIÓN"], var_name='Clase', value_name='SECCIÓN (MONTHLY WAY)')
-            # Se carga la hoja "Sección contra Balanza" de "Monthly - Catalogo.xlsx" en un DataFrame llamado seccion_v_balanza_df.
-            # Se reemplazan todos los valores nulos en el DataFrame con cadenas vacías (""). Esto es para evitar problemas al manipular los datos.
-            # Se convierten las columnas numéricas del DataFrame en una estructura "larga" (long format).
-            # id_vars=["SECCIÓN"] conserva la columna "SECCIÓN" como identificador.
-            # var_name="Clase" asigna el nombre "Clase" a la columna que contendrá los nombres de las columnas originales.
-            # value_name="SECCIÓN (MONTHLY WAY)" asegura que los valores originales de las columnas numéricas se colocan en una columna llamada "SECCIÓN (MONTHLY WAY)".
-            
-            seccion_v_balanza_df = seccion_v_balanza_df[seccion_v_balanza_df["SECCIÓN (MONTHLY WAY)"] != ""]
-            # Filtra el DataFrame para conservar solo las filas donde la columna "SECCIÓN (MONTHLY WAY)" no está vacía ("").
+            catalogo = pd.concat([monthly_cat_clase, seccion_cat]).sort_values(by = ["Clase", "Cuenta"], ascending = [True, True])
+            catalogo = catalogo.rename(columns = {"Cuenta": "Cuenta SAT", "Categoría": "Categoría Monthly"})
 
 
-            monthly_cat = pd.read_excel("Monthly - Catalogo.xlsx", sheet_name = "Categorización de clientes")[["CATEGORÍA (MONTHLY WAY)","SECCIÓN (MONTHLY WAY)", "SECCIÓN", "ID-CATEGORÍA"]]
-            # Se carga la hoja "Categorización de clientes" de "Monthly - Catalogo.xlsx" y se seleccionan solo las columnas relevantes.
-            # El DataFrame resultante (monthly_cat) contiene datos relevantes para vincular categorías con secciones.
-            
-            monthly_cat_clase = monthly_cat.merge(seccion_v_balanza_df, on = ["SECCIÓN", "SECCIÓN (MONTHLY WAY)"], how = "left").drop_duplicates()
-            # Combina monthly_cat con seccion_v_balanza_df usando un join en las columnas comunes: "SECCIÓN" y "SECCIÓN (MONTHLY WAY)".
-            # (Left Join conserva todas las filas de monthly_cat, y añade información de seccion_v_balanza_df si las claves coinciden.)
-            # drop_duplicates() elimina filas duplicadas del DataFrame resultante.
-            
-            monthly_cat_clase = monthly_cat_clase[monthly_cat_clase["ID-CATEGORÍA"] == "ES-MONTHLY"]
-            # Se filtran solo las filas donde "ID-CATEGORÍA" es igual a "ES-MONTHLY", manteniendo datos relevantes al sistema Monthly Way.
-            
-            # monthly_cat_clase contiene: categorías y secciones filtradas por "ID-CATEGORÍA" == "ES-MONTHLY";
-            # y la relación entre las categorías de clientes y su respectiva clasificación de secciones.
-            
-            # El propósito de esta celda es consolidar información de categorías y secciones, integrando datos de las hojas "Categorización de clientes" y "Sección contra Balanza" de "Monthly - Catalogo.xlsx",
-            # para obtener una visión completa de cómo se categorizan y agrupan los datos en el sistema Monthly Way.
-
+            api_key = os.getenv("OPENAI_API_KEY")
+            openai.api_key = api_key
+            # La clave API expuesta aquí podría ser un riesgo de seguridad. En un proyecto real, esta clave debería cargarse desde variables de entorno o un archivo protegido.
             
             classification_list = [] # NOTA: Esta lista no se había definido ya en la celda anterior? Volverla a definir no afecta el resultado?
             unfiltered_classification_list = []
@@ -138,17 +112,14 @@ if uploaded_file is not None:
             for i in set(list(df["Clase"])):
             # Itera sobre cada valor único en la columna "Clase" de df.
                 print(i)
-                cat = list(set(monthly_cat_clase[(monthly_cat_clase["Clase"] == i) & (monthly_cat_clase["ID-CATEGORÍA"] == "ES-MONTHLY")]["CATEGORÍA (MONTHLY WAY)"]))
+                cat = list(set(catalogo[(catalogo["Clase"] == i) & (catalogo["ID"] == "ES-MONTHLY")]["Cuenta SAT"]))
                 # Filtra el DataFrame monthly_cat_clase para obtener las categorías ("CATEGORÍA (MONTHLY WAY)") relacionadas con la clase actual (i) y el identificador "ES-MONTHLY".
                 print(cat)
                 # Crear words_list:
-                if i <= 3:
+                if len(list(df[(df["Nivel"] == 2) & (df["Clase"] == i)]["Nombre"]) ) == 0:
                     words_list = list(df[(df["Nivel"] == 1) & (df["Clase"] == i)]["Nombre"])
                 else:
-                    if len(list(df[(df["Nivel"] == 2) & (df["Clase"] == i)]["Nombre"]) ) == 0:
-                        words_list = list(df[(df["Nivel"] == 1) & (df["Clase"] == i)]["Nombre"])
-                    else:
-                        words_list = list(df[(df["Nivel"] <= 2) & (df["Clase"] == i)]["Nombre"])
+                    words_list = list(df[(df["Nivel"] == 2) & (df["Clase"] == i)]["Nombre"])
                 # Crea una lista de nombres de cuentas (words_list) basándose en el nivel y clase.
                 # Para clases 1, 2, y 3, toma cuentas de nivel 1.
                 # Para otras clases: Si no hay cuentas de nivel 2, usa las de nivel 1; Si hay cuentas de nivel 2, usa todas las de niveles 1 y 2.
@@ -197,66 +168,26 @@ if uploaded_file is not None:
             
             # Ajusta classification_list si las primeras o últimas clasificaciones tienen una estructura inusual.
             
-            # Crear el DataFrame clasificacion_df:
-            clasificacion_df = df.merge(result_df, on = "Nombre", how = "left").fillna(0).drop_duplicates(subset=['Unnamed: 0', 'Cuenta', 'Nombre', 'Saldo Inicial Deudor',
-                   'Saldo Inicial Acreedor', 'Debe', 'Haber', 'Saldo Final Deudor','Saldo Final Acreedor', 'Tipo', 'Nivel', 'Clase', 'Saldo Neto'])
-            # merge: Combina df con result_df usando la columna "Nombre" como clave.
-            # on="Nombre": Combina las filas donde los nombres coinciden.
-            # how="left": Mantiene todas las filas de df, incluso si no hay coincidencia en result_df.
-            # Resultado: Se añade la columna "Categoría" de result_df a df.
-            # fillna(0): Rellena los valores faltantes (NaN) con 0. Esto asegura que las filas sin coincidencia tengan un valor por defecto.
+            results = sum(classification_list, [])
+            nombre_result_list = results[0::2]
+            categoria_result_list = results[1::2]
             
-            # Rellenar clasificaciones vacías:
-            for i in range(len(clasificacion_df)):
-            # Itera sobre cada fila de clasificacion_df.
             
-                if clasificacion_df["Categoría"].iloc[i] == 0 :
-                   clasificacion_df["Categoría"].iloc[i] = clasificacion_df["Categoría"].iloc[i-1]
-                # Si el valor en la columna "Categoría" es 0, copia el valor de la fila anterior.
-                # Propósito: Asegurar que las clasificaciones vacías hereden la categoría de la fila previa, para mantener coherencia.
+            result_df = pd.DataFrame()
+            result_df["Nombre"] = nombre_result_list
+            result_df["Categoría"] = categoria_result_list
+            result_df = result_df.drop_duplicates()
             
-            # Crear clasificacion_seccion_df para clasificación Monthly:
-            clasificacion_seccion_df = clasificacion_df.merge(
-                monthly_cat_clase,
-                left_on = ["Categoría", "Clase"],
-                right_on = ["CATEGORÍA (MONTHLY WAY)", "Clase"],
-                how = "left")
-            # merge: Combina clasificacion_df con monthly_cat_clase.
-            # left_on=["Categoría", "Clase"]: Usa "Categoría" y "Clase" de clasificacion_df como claves.
-            # right_on=["CATEGORÍA (MONTHLY WAY)", "Clase"]: Usa estas columnas de monthly_cat_clase como claves para emparejar.
-            clasificacion_seccion_df = clasificacion_seccion_df.fillna(0)
-            # fillna(0):** Rellena valores faltantes con 0
             
-            # Rellenar clasificaciones completas:
-            # Listas acumuladoras:
-            classification_full_list = []
-            # Almacena clasificaciones completas de "CATEGORÍA (MONTHLY WAY)".
-            section_full_list = []
-            # Almacena las secciones correspondientes.
-            section_code_full_list = []
-            # Almacena los códigos de sección.
+            # Crear el DataFrame final:
+            # Convierte result en un DataFrame con columnas "Nombre" y "Categoría".
+            # Elimina duplicados para asegurar que cada combinación sea única.
             
-            for i in range(len(clasificacion_seccion_df)):
-                if clasificacion_seccion_df["CATEGORÍA (MONTHLY WAY)"].iloc[i] == 0 :
-                    classification_full_list.append(classification_full_list[i-1])
-                    section_full_list.append(section_full_list[i-1])
-                    section_code_full_list.append(section_code_full_list[i-1])
-                # Si "CATEGORÍA (MONTHLY WAY)" es 0, hereda los valores de la fila previa.
-                else:
-                    classification_full_list.append(clasificacion_seccion_df["CATEGORÍA (MONTHLY WAY)"].iloc[i])
-                    section_full_list.append(clasificacion_seccion_df["SECCIÓN (MONTHLY WAY)"].iloc[i])
-                    section_code_full_list.append(clasificacion_seccion_df["SECCIÓN"].iloc[i])
-                # Si no es 0, toma los valores actuales de las columnas.
+            end_time = datetime.now()
+            print('Duration: {}'.format(end_time - start_time))
+        
+
+                
+
             
-            # Agregar las listas al DataFrame:
-            clasificacion_seccion_df["CATEGORÍA (MONTHLY WAY) - Full"] = classification_full_list
-            clasificacion_seccion_df["SECCIÓN (MONTHLY WAY) - Full"] = section_full_list
-            clasificacion_seccion_df["ID-CATEGORÍA - Full"] = "ES-MONTHLY"
-            clasificacion_seccion_df["SECCIÓN - Full"] = section_code_full_list
-            # Se crean nuevas columnas en clasificacion_seccion_df para almacenar las listas completas.
-            
-            # Agregar la columna de hoja:
-            clasificacion_seccion_df["Sheet"] = "Ene/2023"
-            final_df = clasificacion_seccion_df[clasificacion_seccion_df.columns[~clasificacion_seccion_df.columns.isin(list(clasificacion_seccion_df.columns[-10:-6]))]].iloc[:,1:]
-            
-            st.write(final_df)
+            st.write(result_df)
