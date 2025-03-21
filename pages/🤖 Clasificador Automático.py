@@ -182,9 +182,6 @@ if uploaded_file is not None:
             # Crear el DataFrame final:
             # Convierte result en un DataFrame con columnas "Nombre" y "Categoría".
             # Elimina duplicados para asegurar que cada combinación sea única.
-            
-            end_time = datetime.now()
-            print('Duration: {}'.format(end_time - start_time))
         
 
                 
