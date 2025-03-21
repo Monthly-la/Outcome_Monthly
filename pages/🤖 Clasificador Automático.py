@@ -111,10 +111,10 @@ if uploaded_file is not None:
             # Clasificación por clase:
             for i in set(list(df["Clase"])):
             # Itera sobre cada valor único en la columna "Clase" de df.
-                print(i)
+                st.write(i)
                 cat = list(set(catalogo[(catalogo["Clase"] == i) & (catalogo["ID"] == "ES-MONTHLY")]["Cuenta SAT"]))
                 # Filtra el DataFrame monthly_cat_clase para obtener las categorías ("CATEGORÍA (MONTHLY WAY)") relacionadas con la clase actual (i) y el identificador "ES-MONTHLY".
-                print(cat)
+                st.write(cat)
                 # Crear words_list:
                 if len(list(df[(df["Nivel"] == 2) & (df["Clase"] == i)]["Nombre"]) ) == 0:
                     words_list = list(df[(df["Nivel"] == 1) & (df["Clase"] == i)]["Nombre"])
@@ -123,7 +123,7 @@ if uploaded_file is not None:
                 # Crea una lista de nombres de cuentas (words_list) basándose en el nivel y clase.
                 # Para clases 1, 2, y 3, toma cuentas de nivel 1.
                 # Para otras clases: Si no hay cuentas de nivel 2, usa las de nivel 1; Si hay cuentas de nivel 2, usa todas las de niveles 1 y 2.
-                print(words_list)
+                st.write(words_list)
             
                 # Clasificación de las palabras:
                 classification = classify_word(words_list, cat)
