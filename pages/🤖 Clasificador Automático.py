@@ -182,9 +182,57 @@ if uploaded_file is not None:
             # Crear el DataFrame final:
             # Convierte result en un DataFrame con columnas "Nombre" y "Categoría".
             # Elimina duplicados para asegurar que cada combinación sea única.
-        
+            # Crear el DataFrame clasificacion_df:
+            clasificacion_df = df.merge(result_df, on = "Nombre", how = "left").fillna(0).drop_duplicates(subset=['Unnamed: 0', 'Cuenta', 'Nombre', 'Saldo Inicial Deudor',
+                   'Saldo Inicial Acreedor', 'Debe', 'Haber', 'Saldo Final Deudor','Saldo Final Acreedor', 'Tipo', 'Nivel', 'Clase', 'Saldo Neto'])
+            
+            clasificacion_df = clasificacion_df[clasificacion_df["Nivel"] != 1]
 
-                
+            # Rellenar clasificaciones vacías:
+            for i in range(len(clasificacion_df)):
+            # Itera sobre cada fila de clasificacion_df.
+            
+                if clasificacion_df["Categoría"].iloc[i] == 0 :
+                   clasificacion_df["Categoría"].iloc[i] = clasificacion_df["Categoría"].iloc[i-1]
+                # Si el valor en la columna "Categoría" es 0, copia el valor de la fila anterior.
+                # Propósito: Asegurar que las clasificaciones vacías hereden la categoría de la fila previa, para mantener coherencia.
+            clasificacion_seccion_df = clasificacion_df.merge(
+                catalogo,
+                left_on = ["Categoría", "Clase"],
+                right_on = ["Cuenta SAT", "Clase"],
+                how = "left")
+            # merge: Combina clasificacion_df con monthly_cat_clase.
+            # left_on=["Categoría", "Clase"]: Usa "Categoría" y "Clase" de clasificacion_df como claves.
+            # right_on=["CATEGORÍA (MONTHLY WAY)", "Clase"]: Usa estas columnas de monthly_cat_clase como claves para emparejar.
+            clasificacion_seccion_df = clasificacion_seccion_df.fillna(0)
+            # fillna(0):** Rellena valores faltantes con 0
+            
+            # Rellenar clasificaciones completas:
+            # Listas acumuladoras:
+            classification_full_list = []
+            # Almacena clasificaciones completas de "CATEGORÍA (MONTHLY WAY)".
+            section_full_list = []
+            # Almacena las secciones correspondientes.
+            section_code_full_list = []
+            # Almacena los códigos de sección.
+            
+            for i in range(len(clasificacion_seccion_df)):
+                if clasificacion_seccion_df["CATEGORÍA (MONTHLY WAY)"].iloc[i] == 0:
+                    classification_full_list.append(classification_full_list[i-1])
+                    section_full_list.append(section_full_list[i-1])
+                    section_code_full_list.append(section_code_full_list[i-1])
+                # Si "CATEGORÍA (MONTHLY WAY)" es 0, hereda los valores de la fila previa.
+                else:
+                    classification_full_list.append(clasificacion_seccion_df["CATEGORÍA (MONTHLY WAY)"].iloc[i])
+                    section_full_list.append(clasificacion_seccion_df["Sección"].iloc[i])
+                    section_code_full_list.append(clasificacion_seccion_df["Sección"].iloc[i])
+                # Si no es 0, toma los valores actuales de las columnas.
+            
+            # Agregar las listas al DataFrame:
+            clasificacion_seccion_df["CATEGORÍA (MONTHLY WAY) - Full"] = classification_full_list
+            clasificacion_seccion_df["SECCIÓN (MONTHLY WAY) - Full"] = section_full_list
+            clasificacion_seccion_df["ID-CATEGORÍA - Full"] = "ES-MONTHLY"
+            clasificacion_seccion_df["SECCIÓN - Full"] = section_code_full_list
 
             
-            st.write(result_df)
+            st.write(clasificacion_seccion_df)
