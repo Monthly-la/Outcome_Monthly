@@ -380,7 +380,7 @@ def process_data(df, option = option):
             inc_statem_df = inc_statem_df.drop(columns = ["Saldo Neto"])
             general = []
 
-            cuenta_general_corte = sorted(inc_statem_df['Nivel'].unique())[-1]
+            cuenta_general_corte = int(sorted(inc_statem_df['Nivel'].unique())[-1])
 
             st.markdown(cuenta_general_corte)
             
