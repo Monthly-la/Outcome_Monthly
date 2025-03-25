@@ -380,11 +380,14 @@ def process_data(df, option = option):
             inc_statem_df = inc_statem_df.drop(columns = ["Saldo Neto"])
             general = []
 
+            try:
+                cuenta_general_corte = set[list[inc_statem_df["Nivel"]]][-3]
+            except:
+                cuenta_general_corte = set[list[inc_statem_df["Nivel"]]][-2]
+            
             for i in inc_statem_df["Cuenta"]:
-                try:
-                    general.append(i[:set[list[inc_statem_df["Cuenta"]]][-3]])
-                except:
-                    general.append(i[:set[list[inc_statem_df["Cuenta"]]][-2]])
+                general.append(i[:cuenta_general_corte])
+
             inc_statem_df["Cuenta General"] = general
             
             detalle_df = inc_statem_df.groupby(by = ["Cuenta General", "Nivel"])["Cuenta",].count().reset_index()
