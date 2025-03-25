@@ -381,7 +381,10 @@ def process_data(df, option = option):
             general = []
 
             for i in inc_statem_df["Cuenta"]:
-                general.append(i[:2])
+                try:
+                    general.append(i[:set[list[inc_statem_df["Cuenta"]]][-3]])
+                except:
+                    general.append(i[:set[list[inc_statem_df["Cuenta"]]][-2]])
             inc_statem_df["Cuenta General"] = general
             
             detalle_df = inc_statem_df.groupby(by = ["Cuenta General", "Nivel"])["Cuenta",].count().reset_index()
