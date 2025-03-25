@@ -380,9 +380,8 @@ def process_data(df, option = option):
             inc_statem_df = inc_statem_df.drop(columns = ["Saldo Neto"])
             general = []
 
-            st.markdown(set[list[inc_statem_df["Nivel"]]][-3])
-            st.markdown(set[list[inc_statem_df["Nivel"]]][-2])
-            st.markdown(set[list[inc_statem_df["Nivel"]]][-1])
+            st.markdown(set[list[inc_statem_df["Nivel"]]])
+            
             try:
                 cuenta_general_corte = set[list[inc_statem_df["Nivel"]]][-3]
             except:
