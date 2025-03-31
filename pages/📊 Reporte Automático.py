@@ -1,33 +1,40 @@
-import requests
 import streamlit as st
+import os
 import tempfile
+import datetime
+import requests
 
-st.title("📊 Generador de Reportes PAGS")
+# === STREAMLIT UI ===
+st.set_page_config(page_title="PAGS PPT Generator", layout="centered")
+st.title("📊 PAGS Report Automation")
 
-excel_file = st.file_uploader("Sube el archivo Excel", type=["xlsx"])
-logo_file = st.file_uploader("Sube el logo", type=["png", "jpg", "jpeg"])
-website = st.text_input("Sitio web", "https://productorags.com.mx/")
-industria = st.selectbox("Industria", ["Agricultura", "Construcción", "Tecnología"])
-pais = st.selectbox("País", ["🇲🇽 México", "🇨🇱 Chile", "🇨🇴 Colombia"])
-periodo = st.selectbox("Periodo", ["📆 Enero 2025", "📆 Febrero 2025", "📆 Marzo 2025"])
-moneda = st.selectbox("Moneda", ["💲MXN", "💲CLP", "💲COP"])
+excel_file = st.file_uploader("Upload Excel Model", type=["xlsx"])
+logo_file = st.file_uploader("Upload Logo Image", type=["png", "jpg", "jpeg"])
 
-if st.button("Generar Presentación"):
+industria = st.selectbox("Selecciona la industria:", ["Agricultura", "Construcción", "Manufactura", "Tecnología"])
+pais = st.selectbox("Selecciona el país:", ["🇲🇽 México", "🇨🇱 Chile", "🇨🇴 Colombia", "🇵🇪 Perú"])
+periodo = st.selectbox("Selecciona el periodo:", ["📆 Enero 2025", "📆 Febrero 2025", "📆 Marzo 2025"])
+moneda = st.selectbox("Selecciona la moneda:", ["💲MXN", "💲CLP", "💲COP", "💲PEN"])
+
+website = st.text_input("Website para semblanza (opcional):", value="https://productorags.com.mx/")
+
+
+def generate_ppt_report():
     if not all([excel_file, logo_file]):
-        st.error("Sube todos los archivos requeridos")
-        st.stop()
+        st.error("🚫 Por favor, sube todos los archivos requeridos.")
+        return
 
-    with tempfile.NamedTemporaryFile(delete=False, suffix=".xlsx") as tmp_excel, \
-         tempfile.NamedTemporaryFile(delete=False, suffix=".png") as tmp_logo:
+    with tempfile.TemporaryDirectory() as tmpdir:
+        excel_path = os.path.join(tmpdir, "model.xlsx")
+        logo_path = os.path.join(tmpdir, "logo.png")
 
-        tmp_excel.write(excel_file.read())
-        tmp_logo.write(logo_file.read())
-        tmp_excel.flush()
-        tmp_logo.flush()
+        with open(excel_path, "wb") as f: f.write(excel_file.read())
+        with open(logo_path, "wb") as f: f.write(logo_file.read())
 
+        # Prepare request payload
         files = {
-            "excel": open(tmp_excel.name, "rb"),
-            "image": open(tmp_logo.name, "rb")
+            "excel": open(excel_path, "rb"),
+            "logo": open(logo_path, "rb")
         }
         data = {
             "website": website,
@@ -37,11 +44,22 @@ if st.button("Generar Presentación"):
             "moneda": moneda
         }
 
-        with st.spinner("Procesando..."):
-            response = requests.post("https://barrel-exchanges-arabian-paintings.trycloudflare.com/generate_ppt", files=files, data=data)
+        # Call Flask server
+        try:
+            response = requests.post(
+                "https://barrel-exchanges-arabian-paintings.trycloudflare.com/generate_ppt",
+                files=files,
+                data=data
+            )
+            if response.status_code == 200:
+                output_filename = f"PAGS_Reporte_{datetime.datetime.now().strftime('%Y%m%d_%H%M%S')}.pptx"
+                st.success("✅ Presentación generada correctamente.")
+                st.download_button("📥 Descargar Presentación PPT", response.content, file_name=output_filename)
+            else:
+                st.error(f"❌ Error en el servidor: {response.status_code}\n{response.text}")
+        except Exception as e:
+            st.error(f"❌ No se pudo contactar con el servidor: {e}")
 
-        if response.status_code == 200:
-            st.success("✅ Presentación generada")
-            st.download_button("📥 Descargar Presentación", data=response.content, file_name="Reporte_PAGS.pptx")
-        else:
-            st.error(f"Error: {response.text}")
+
+if st.button("🛠️ Generar Presentación"):
+    generate_ppt_report()
