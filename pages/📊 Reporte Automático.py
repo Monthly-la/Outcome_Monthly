@@ -17,6 +17,8 @@ periodo = st.selectbox("Selecciona el periodo:", ["📆 Enero 2025", "📆 Febre
 moneda = st.selectbox("Selecciona la moneda:", ["💲MXN", "💲CLP", "💲COP", "💲PEN"])
 
 website = st.text_input("Website para semblanza (opcional):", value="https://productorags.com.mx/")
+cloudflare_url = st.text_input("Cloudflare Tunnel URL:", value="https://<tu-túnel>.trycloudflare.com")
+
 
 
 def generate_ppt_report():
@@ -47,7 +49,7 @@ def generate_ppt_report():
         # Call Flask server
         try:
             response = requests.post(
-                "https://dinner-captain-survey-naval.trycloudflare.com/generate_ppt",
+                f"{cloudflare_url}/generate_ppt",
                 files=files,
                 data=data
             )
