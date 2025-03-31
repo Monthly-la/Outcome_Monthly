@@ -19,8 +19,6 @@ moneda = st.selectbox("Selecciona la moneda:", ["💲MXN", "💲CLP", "💲COP",
 website = st.text_input("Website para semblanza (opcional):", value="https://productorags.com.mx/")
 cloudflare_url = st.text_input("Cloudflare Tunnel URL:", value="https://<tu-túnel>.trycloudflare.com")
 
-
-
 def generate_ppt_report():
     if not all([excel_file, logo_file]):
         st.error("🚫 Por favor, sube todos los archivos requeridos.")
@@ -46,7 +44,6 @@ def generate_ppt_report():
             "moneda": moneda
         }
 
-        # Call Flask server
         try:
             response = requests.post(
                 f"{cloudflare_url}/generate_ppt",
@@ -65,3 +62,4 @@ def generate_ppt_report():
 
 if st.button("🛠️ Generar Presentación"):
     generate_ppt_report()
+
