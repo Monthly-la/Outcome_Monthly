@@ -47,7 +47,7 @@ def generate_ppt_report():
         # Call Flask server
         try:
             response = requests.post(
-                "https://barrel-exchanges-arabian-paintings.trycloudflare.com/generate_ppt",
+                "https://dinner-captain-survey-naval.trycloudflare.com/generate_ppt",
                 files=files,
                 data=data
             )
