@@ -18,4 +18,3 @@ pyexcel
 pyexcel-xls
 pyexcel-xlsx
 openpyxl
-pywin32
