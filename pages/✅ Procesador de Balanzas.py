@@ -386,7 +386,6 @@ def process_data(df, option = option):
 
             except:
                 cuenta_general_corte = int(sorted(inc_statem_df['Nivel'].unique())[-1])
-            st.markdown(cuenta_general_corte)
 
                 
             
