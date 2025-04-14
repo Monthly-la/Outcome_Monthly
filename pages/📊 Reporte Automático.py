@@ -38,4 +38,4 @@ fillout_embed_code = """
 """
 
 # Embed the form
-components.html(fillout_embed_code, height=1100, scrolling=True)
+components.html(fillout_embed_code, height=1150, scrolling=True)
