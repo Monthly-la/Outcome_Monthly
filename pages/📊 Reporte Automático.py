@@ -1,65 +1,41 @@
 import streamlit as st
-import os
-import tempfile
-import datetime
-import requests
+import streamlit.components.v1 as components
 
-# === STREAMLIT UI ===
-st.set_page_config(page_title="PAGS PPT Generator", layout="centered")
-st.title("📊 PAGS Report Automation")
+st.set_page_config(
+    page_title="Monthly - App Interna",
+    page_icon="💸",
+    layout="wide"
+)
 
-excel_file = st.file_uploader("Upload Excel Model", type=["xlsx"])
-logo_file = st.file_uploader("Upload Logo Image", type=["png", "jpg", "jpeg"])
+st.markdown("""
+<style>
+button {
+    background-color: #14E79D;
+}
+</style>
+""", unsafe_allow_html=True)
 
-industria = st.selectbox("Selecciona la industria:", ["Agricultura", "Construcción", "Manufactura", "Tecnología"])
-pais = st.selectbox("Selecciona el país:", ["🇲🇽 México", "🇨🇱 Chile", "🇨🇴 Colombia", "🇵🇪 Perú"])
-periodo = st.selectbox("Selecciona el periodo:", ["📆 Enero 2025", "📆 Febrero 2025", "📆 Marzo 2025"])
-moneda = st.selectbox("Selecciona la moneda:", ["💲MXN", "💲CLP", "💲COP", "💲PEN"])
-
-website = st.text_input("Website para semblanza (opcional):", value="https://productorags.com.mx/")
-cloudflare_url = st.text_input("Cloudflare Tunnel URL:", value="https://<tu-túnel>.trycloudflare.com")
-
-def generate_ppt_report():
-    if not all([excel_file, logo_file]):
-        st.error("🚫 Por favor, sube todos los archivos requeridos.")
-        return
-
-    with tempfile.TemporaryDirectory() as tmpdir:
-        excel_path = os.path.join(tmpdir, "model.xlsx")
-        logo_path = os.path.join(tmpdir, "logo.png")
-
-        with open(excel_path, "wb") as f: f.write(excel_file.read())
-        with open(logo_path, "wb") as f: f.write(logo_file.read())
-
-        # Prepare request payload
-        files = {
-            "excel": open(excel_path, "rb"),
-            "logo": open(logo_path, "rb")
-        }
-        data = {
-            "website": website,
-            "industria": industria,
-            "pais": pais,
-            "periodo": periodo,
-            "moneda": moneda
-        }
-
-        try:
-            response = requests.post(
-                f"{cloudflare_url}/generate_ppt",
-                files=files,
-                data=data
+header_logo_1, header_logo_2 = st.columns(2)
+with header_logo_1:
+    st.image(
+                "./Logo. Monthly Oficial.png",
+                width=250, # Manually Adjust the width of the image as per requirement
             )
-            if response.status_code == 200:
-                output_filename = f"PAGS_Reporte_{datetime.datetime.now().strftime('%Y%m%d_%H%M%S')}.pptx"
-                st.success("✅ Presentación generada correctamente.")
-                st.download_button("📥 Descargar Presentación PPT", response.content, file_name=output_filename)
-            else:
-                st.error(f"❌ Error en el servidor: {response.status_code}\n{response.text}")
-        except Exception as e:
-            st.error(f"❌ No se pudo contactar con el servidor: {e}")
+with header_logo_2:
+    st.markdown("<h2 style='text-align: right; color: #5666FF;'>📊 Reporte Automático</h2>", unsafe_allow_html=True)
+
+st.divider()
 
 
-if st.button("🛠️ Generar Presentación"):
-    generate_ppt_report()
+fillout_embed_code = """
+<div style="width:100%;height:500px;" 
+     data-fillout-id="juf1xp5BPdus" 
+     data-fillout-embed-type="standard" 
+     data-fillout-inherit-parameters 
+     data-fillout-dynamic-resize>
+</div>
+<script src="https://server.fillout.com/embed/v1/"></script>
+"""
 
+# Embed the form
+components.html(fillout_embed_code, height=600, scrolling=True)
