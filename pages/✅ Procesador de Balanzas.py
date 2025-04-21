@@ -230,7 +230,10 @@ def process_data(df, option = option):
             
             nombre_list = []
             for n in df["Nombre"]:
-                nombre_list.append(n.strip())
+                try:
+                    nombre_list.append(n.strip())
+                except:
+                    nombre_list.append(n)
             
             df["Nombre"] = nombre_list
 
