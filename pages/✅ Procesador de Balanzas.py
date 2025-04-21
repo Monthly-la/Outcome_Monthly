@@ -355,9 +355,9 @@ def process_data(df, option = option):
             
             df["Saldo Neto"] = df["Saldo Final Deudor"] - df["Saldo Final Acreedor"]
             
-            activos = df[(df["Nivel"] == 1) & (df["Clase"] == 1)]["Saldo Neto"].sum()
-            pasivos = df[(df["Nivel"] == 1) & (df["Clase"] == 2)]["Saldo Neto"].sum()
-            capital= df[(df["Nivel"] == 1) & (df["Clase"] == 3)]["Saldo Neto"].sum()
+            activos = df[(df["Bold"] == 1) & (df["Clase"] == 1)]["Saldo Neto"].sum()
+            pasivos = df[(df["Bold"] == 1) & (df["Clase"] == 2)]["Saldo Neto"].sum()
+            capital= df[(df["Bold"] == 1) & (df["Clase"] == 3)]["Saldo Neto"].sum()
 
 
             utilidad_acum = df[(df["Nivel"] == 1) & (df["Clase"] >= 4)]["Saldo Neto"].sum()
