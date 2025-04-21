@@ -360,7 +360,7 @@ def process_data(df, option = option):
             capital= df[(df["Bold"] == 1) & (df["Clase"] == 3)]["Saldo Neto"].sum()
 
 
-            utilidad_acum = df[(df["Nivel"] == 1) & (df["Clase"] >= 4)]["Saldo Neto"].sum()
+            utilidad_acum = df[(df["Nivel"] == min(df[df["Clase"] >= 4]["Nivel"])) & (df["Clase"] >= 4)]["Saldo Neto"].sum()
             
             result = round(activos+pasivos+capital+utilidad_acum,1)
             
