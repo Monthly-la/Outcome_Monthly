@@ -552,7 +552,7 @@ def process_data(df, option = option):
         tidy_df = tidy_df.dropna(how='all')
         tidy_df = tidy_df.iloc[1:]
         
-        outcome_df = outcome_df.pivot(index=["Código", "Subcuenta", "Padre", "Nombre del Padre", columns=["Sheet"], values=["Saldo Neto"]).iloc[1:].reset_index().droplevel(0, axis = 1)
+        outcome_df = outcome_df.pivot(index=["Código", "Subcuenta", "Padre", "Nombre del Padre"], columns=["Sheet"], values=["Saldo Neto"]).iloc[1:].reset_index().droplevel(0, axis = 1)
         outcome_df = outcome_df.fillna(0)
 
         outcome_columns = ["Código", "Subcuenta", "Padre", "Nombre del Padre"]
