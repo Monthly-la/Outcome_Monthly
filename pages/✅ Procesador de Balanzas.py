@@ -536,13 +536,13 @@ def process_data(df, option = option):
             df_final_nivel = df_final[[
                 "Código", "Cuenta", "Padre", "Cuenta del Padre", "Bold", "Cargos", "Abonos", "Saldo Neto", "Nivel", "Clase"]]
             
-            balance_df = df[(df["Bold"] == 1) & (df["Clase"] <= 3)][["Cuenta","Nombre","Saldo Neto"]]
+            balance_df = df[(df["Bold"] == 1) & (df["Clase"] <= 3)][["Código","Cuenta","Saldo Neto"]]
             balance_df["Sheet"] = tabs_date
 
             inc_statem_df = df[(df["Clase"] > 3)]
             inc_statem_df = inc_statem_df.drop(columns = ["Saldo Neto"])
             inc_statem_df["Saldo Neto"] = inc_statem_df["Cargos"] - inc_statem_df["Abonos"]
-            inc_statem_df = inc_statem_df[["Cuenta", "Nombre", "Saldo Neto"]]
+            inc_statem_df = inc_statem_df[["Código", "Cuenta", "Saldo Neto"]]
             inc_statem_df["Sheet"] = tabs_date
 
             outcome_df = pd.concat([outcome_df, balance_df, inc_statem_df])
