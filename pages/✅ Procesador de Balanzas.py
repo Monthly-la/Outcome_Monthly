@@ -437,7 +437,7 @@ def process_data(df, option = option):
             df_validado["Estado"] = df_validado.apply(clasificar_estado, axis=1)
             
             df_completo = df_validado[[
-                "Código", "Cuenta", "Padre", "Nombre del Padre", "Nivel",
+                "Código", "Cuenta", "Padre", "Cuenta del Padre", "Nivel",
                 "Saldo Neto", "Suma Hijos", "Subcuentas cuadran", "Tiene Hijos", "Estado"
             ]]
             
@@ -535,7 +535,7 @@ def process_data(df, option = option):
             
             # === 9. Tabla final con todo lo necesario ===
             df_final_nivel = df_final[[
-                "Código", "Cuenta", "Padre", "Nombre del Padre", "Bold", "Cargos", "Abonos", "Saldo Neto", "Nivel", "Clase"]]
+                "Código", "Cuenta", "Padre", "Cuenta del Padre", "Bold", "Cargos", "Abonos", "Saldo Neto", "Nivel", "Clase"]]
             
             balance_df = df[(df["Bold"] == 1) & (df["Clase"] <= 3)][["Cuenta","Nombre","Saldo Neto"]]
             balance_df["Sheet"] = tabs_date
@@ -554,16 +554,16 @@ def process_data(df, option = option):
         tidy_df = tidy_df.dropna(how='all')
         tidy_df = tidy_df.iloc[1:]
         
-        outcome_df = outcome_df.pivot(index=["Código", "Subcuenta", "Padre", "Nombre del Padre"], columns=["Sheet"], values=["Saldo Neto"]).iloc[1:].reset_index().droplevel(0, axis = 1)
+        outcome_df = outcome_df.pivot(index=["Código", "Subcuenta", "Padre", "Cuenta del Padre"], columns=["Sheet"], values=["Saldo Neto"]).iloc[1:].reset_index().droplevel(0, axis = 1)
         outcome_df = outcome_df.fillna(0)
 
-        outcome_columns = ["Código", "Subcuenta", "Padre", "Nombre del Padre"]
+        outcome_columns = ["Código", "Subcuenta", "Padre", "Cuenta del Padre"]
 
         for i in outcome_df.columns[2:]:
             outcome_columns.append(i)
 
         outcome_df.columns = outcome_columns
-        outcome_df = outcome_df[["Código", "Subcuenta", "Padre", "Nombre del Padre"] + tabs_dates]
+        outcome_df = outcome_df[["Código", "Subcuenta", "Padre", "Cuenta del Padre"] + tabs_dates]
 
         outcome_df["Código"] = outcome_df["Código"].astype("str")
         
