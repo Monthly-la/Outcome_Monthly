@@ -536,7 +536,10 @@ def process_data(df, option = option):
             df_final_nivel = df_final[[
                 "Código", "Cuenta", "Padre", "Cuenta del Padre", "Bold", "Cargos", "Abonos", "Saldo Neto", "Nivel", "Clase"]]
             
-            balance_df = df_final_nivel[(df_final_nivel["Bold"] == 1) & (df_final_nivel["Clase"] <= 3)][["Código","Cuenta", "Padre", "Cuenta del Padre", "Saldo Neto"]]
+            # Solo Bold
+            #balance_df = df_final_nivel[(df_final_nivel["Bold"] == 1) & (df_final_nivel["Clase"] <= 3)][["Código","Cuenta", "Padre", "Cuenta del Padre", "Saldo Neto"]]
+            
+            balance_df = df_final_nivel[(df_final_nivel["Clase"] <= 3)][["Código","Cuenta", "Padre", "Cuenta del Padre", "Saldo Neto"]]
             balance_df["Sheet"] = tabs_date
 
             inc_statem_df = df_final_nivel[(df_final_nivel["Clase"] > 3)]
