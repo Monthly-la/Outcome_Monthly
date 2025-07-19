@@ -375,63 +375,178 @@ def process_data(df, option = option):
             st.dataframe(results_df, width = 1000)
             st.divider()
             
+            
             #Outcome Matrix
+            
+            df_unique = df.drop_duplicates(subset="Código", keep="first").copy()
+            df_unique = df_unique.rename(columns = {"Cuenta":"Código", "Nombre":"Cuenta"]
+            cuentas_dict = df_unique.set_index("Código").to_dict(orient="index")
+            
+            # === 3. Función para obtener el padre jerárquico correcto ===
+            def obtener_padre(cuenta, todas_cuentas):
+                partes = cuenta.split('-')
+                for i in reversed(range(1, len(partes))):
+                    posible_padre = '-'.join(partes[:i] + ['0000'] * (4 - i))
+                    if posible_padre in todas_cuentas and posible_padre != cuenta:
+                        return posible_padre
+                return None
+            
+            # === 4. Calcular columnas jerárquicas ===
+            cuentas_existentes = set(df_unique["Código"])
+            df["Padre"] = df["Código"].apply(lambda x: obtener_padre(x, cuentas_existentes))
+            df["Cuenta del Padre"] = df["Padre"].map(lambda x: cuentas_dict[x]["Cuenta"] if x in cuentas_dict else None)
+            df["Nivel"] = df["Código"].apply(lambda x: sum(1 for seg in x.split("-") if seg != '0000'))
+            # === 5. Calcular suma de subcuentas para cada padre ===
+            suma_subcuentas = (
+                df.groupby("Padre")["Saldo Neto"]
+                .sum()
+                .reset_index()
+                .rename(columns={"Padre": "Código Padre", "Saldo Neto": "Suma Hijos"})
+            )
+            
+            # === 6. Unir datos originales con sumas de hijos ===
+            df_validado = df.merge(suma_subcuentas, how="left", left_on="Código", right_on="Código Padre")
+            
+            # === 7. Verificar si cuadran subcuentas con el saldo del padre ===
+            df_validado["Subcuentas cuadran"] = df_validado.apply(
+                lambda row: (
+                    np.isclose(row["Saldo Neto"], row["Suma Hijos"], atol=1)
+                    if not pd.isna(row["Suma Hijos"])
+                    else False
+                ),
+                axis=1,
+            )
+            
+            # === 8. Verificar si la cuenta tiene hijos directos ===
+            def tiene_hijos(cuenta):
+                return any(obtener_padre(child, cuentas_existentes) == cuenta for child in cuentas_existentes)
+            
+            df_validado["Tiene Hijos"] = df_validado["Código"].apply(tiene_hijos)
+            
+            # === 9. Clasificar el estado de la cuenta ===
+            def clasificar_estado(row):
+                if row["Subcuentas cuadran"]:
+                    return "Cuadran"
+                elif not row["Tiene Hijos"]:
+                    return "No subcuentas"
+                else:
+                    return "No cuadran"
+            
+            df_validado["Estado"] = df_validado.apply(clasificar_estado, axis=1)
+            
+            df_completo = df_validado[[
+                "Código", "Cuenta", "Padre", "Nombre del Padre", "Nivel",
+                "Saldo Neto", "Suma Hijos", "Subcuentas cuadran", "Tiene Hijos", "Estado"
+            ]]
+            
+            df_completo_ajuste = pd.DataFrame()
+            
+            for i in list(df_completo["Código"].str[0].unique()):
+                df_seccion = df_completo[df_completo["Código"].str.startswith(i)]
+                sección = df_seccion["Cuenta"].iloc[0]
+                cuenta = df_seccion["Código"].iloc[0]
+                valores = df_seccion[["Padre", "Cuenta del Padre"]].iloc[0:2].values.flatten()
+                todos_none = all(v is None for v in valores)
+                nulos = df_seccion[df_seccion["Padre"].isnull()].iloc[1:]
+            
+                if todos_none:  # All None
+                    df_seccion["Cuenta del Padre"].iloc[1:] = df_seccion["Cuenta del Padre"].iloc[1:].fillna(sección)
+                    df_seccion["Padre"].iloc[1:] = df_seccion["Padre"].iloc[1:].fillna(cuenta)
+            
+                    primer_cuenta = list(df_seccion.index)[0]
+                    #df_seccion.loc[primer_cuenta + 1:, "Nivel"] += 1
+                    df_seccion.loc[primer_cuenta, "Nivel"] -= 1
+                    df_seccion["Nivel"] += 1
+                    
+                else: #Not None
+                    padres = df_seccion[df_seccion["Cuenta del Padre"] == sección]
+                    padres_list = list(padres["Cuenta"])
+                    cuenta_list = list(padres["Código"])
+                    nivel_list = list(padres["Nivel"])
+                    index_list = list(padres.index)
+                    for x in range(len(index_list)):
+                        padre = padres_list[x]
+                        cuenta = cuenta_list[x]
+                        nivel = nivel_list[x]
+                        try:
+                            df_seccion.loc[index_list[x]:index_list[x+1], "Cuenta del Padre"] = df_seccion.loc[index_list[x]:index_list[x+1], "Cuenta del Padre"].fillna(padre)
+                            df_seccion.loc[index_list[x]:index_list[x+1], "Padre"] = df_seccion.loc[index_list[x]:index_list[x+1], "Padre"].fillna(cuenta)
+                        except:
+                            df_seccion.loc[index_list[x]:list(df_seccion.index)[-1], "Cuenta del Padre"] = df_seccion.loc[index_list[x]:list(df_seccion.index)[-1], "Cuenta del Padre"].fillna(padre)
+                            df_seccion.loc[index_list[x]:list(df_seccion.index)[-1], "Padre"] = df_seccion.loc[index_list[x]:list(df_seccion.index)[-1], "Padre"].fillna(cuenta)
+                        
+                df_completo_ajuste = pd.concat([df_completo_ajuste, df_seccion])
+            
+            df_completo_ajuste = df_completo_ajuste.drop(columns = "Suma Hijos")
+            
+            nivel_list = []
+            
+            counter = 0
+            for _, row in df_completo_ajuste.iterrows():
+                if row["Padre"] is None or row["Padre"] == "":
+                    df_completo_ajuste["Nivel"].iloc[counter] = 1
+                else:
+                    df_completo_ajuste["Nivel"].iloc[counter] = df_completo_ajuste[df_completo_ajuste["Código"] == row["Padre"]]["Nivel"].values[0] + 1
+                counter += 1
+                                        
+            
+            # === 5. Calcular suma de subcuentas para cada padre ===
+            suma_subcuentas = (
+                df_completo_ajuste.groupby("Padre")["Saldo Neto"]
+                .sum()
+                .reset_index()
+                .rename(columns={"Padre": "Código Padre", "Saldo Neto": "Suma Hijos"})
+            )
+            
+            # === 6. Unir datos originales con sumas de hijos ===
+            df_final = df_completo_ajuste.merge(suma_subcuentas, how="left", left_on="Código", right_on="Código Padre")
+            
+            # === 7. Verificar si cuadran subcuentas con el saldo del padre ===
+            df_final["Subcuentas cuadran"] = df_final.apply(
+                lambda row: (
+                    np.isclose(row["Saldo Neto"], row["Suma Hijos"], atol=1)
+                    if not pd.isna(row["Suma Hijos"])
+                    else False
+                ),
+                axis=1,
+            )
+            
+            # === 8. Verificar si la cuenta tiene hijos directos ===
+            def tiene_hijos(cuenta):
+                if len(df_final[df_final["Padre"] == cuenta]) != 0:
+                    return True
+                else:
+                    return False
+            
+            df_final["Tiene Hijos"] = df_final["Código"].apply(tiene_hijos)
+            
+            # === 8. Clasificar el estado de la cuenta ===
+            def clasificar_estado(row):
+                if row["Subcuentas cuadran"]:
+                    return "Cuadran"
+                elif not row["Tiene Hijos"]:
+                    return "No subcuentas"
+                else:
+                    return "No cuadran"
+            
+            df_final["Estado"] = df_final.apply(clasificar_estado, axis=1)
+            
+            # === 9. Tabla final con todo lo necesario ===
+            df_final_nivel = df_final[[
+                "Código", "Cuenta", "Padre", "Nombre del Padre", "Bold", "Cargos", "Abonos", "Saldo Neto", "Nivel", "Clase"]]
+            
             balance_df = df[(df["Bold"] == 1) & (df["Clase"] <= 3)][["Cuenta","Nombre","Saldo Neto"]]
             balance_df["Sheet"] = tabs_date
 
             inc_statem_df = df[(df["Clase"] > 3)]
             inc_statem_df = inc_statem_df.drop(columns = ["Saldo Neto"])
-            general = []
-
-            
-            try:
-                cuenta_general_corte = int(sorted(inc_statem_df['Nivel'].unique())[-2])
-
-            except:
-                cuenta_general_corte = int(sorted(inc_statem_df['Nivel'].unique())[-1])
-
-                
-            
-            for i in inc_statem_df["Cuenta"]:
-                general.append(i[:2])
-
-            inc_statem_df["Cuenta General"] = general
-            
-            detalle_df = inc_statem_df.groupby(by = ["Cuenta General", "Nivel"])["Cuenta",].count().reset_index()
-            
-            nivel_deseado = []
-            for c in list(set(detalle_df["Cuenta General"])):
-                detalle_nivel_df = detalle_df[(detalle_df["Cuenta General"] == c)]
-                
-                if len(detalle_nivel_df[detalle_nivel_df["Cuenta"] >= 2]) > 0:
-                    if len(detalle_nivel_df[detalle_nivel_df["Cuenta"] <= 30]) > 0:
-                        nivel_deseado.append([c, max(detalle_nivel_df[detalle_nivel_df["Cuenta"] >= 2]["Nivel"])])
-                    else:
-                        nivel_deseado.append([c, max(detalle_nivel_df[detalle_nivel_df["Cuenta"] >= 2]["Nivel"])-1])
-                else:
-                    nivel_deseado.append([c, 1])
-                    
-            nivel_deseado_df = pd.DataFrame(nivel_deseado, columns = ["Cuenta General", "Nivel Deseado"])
-
-                
-            
-            detalle_deseado_df = detalle_df.merge(nivel_deseado_df, on = "Cuenta General", how = "left")[["Cuenta General", "Nivel Deseado"]].drop_duplicates()
-            
-            inc_statem_df = inc_statem_df.merge(detalle_deseado_df, on = "Cuenta General", how = "left")
-
             inc_statem_df["Saldo Neto"] = inc_statem_df["Cargos"] - inc_statem_df["Abonos"]
-            inc_statem_df = inc_statem_df[(inc_statem_df["Nivel"] <= inc_statem_df["Nivel Deseado"]) & (inc_statem_df["Nivel"] >= inc_statem_df["Nivel Deseado"] - 1)]
-            #inc_statem_df = inc_statem_df[(inc_statem_df["Nivel"] <= inc_statem_df["Nivel Deseado"] + 3) & (inc_statem_df["Nivel"] > 1)]
-
-            #if len(inc_statem_df) > 1:
-            #    inc_statem_df = inc_statem_df[inc_statem_df["Nivel"] != 1]
-            
             inc_statem_df = inc_statem_df[["Cuenta", "Nombre", "Saldo Neto"]]
             inc_statem_df["Sheet"] = tabs_date
 
             outcome_df = pd.concat([outcome_df, balance_df, inc_statem_df])
 
-        outcome_df = outcome_df.rename(columns = {"Cuenta":"Código", "Nombre":"Subcuenta"})
+        outcome_df = outcome_df.rename(columns = {"Cuenta":"Subcuenta"})
         tidy_df = outcome_df[["Código", "Subcuenta", "Sheet", "Saldo Neto"]]
         tidy_df = tidy_df[tidy_df["Código"].notnull()]
         tidy_df = tidy_df.dropna(how='all')
