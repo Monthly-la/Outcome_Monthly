@@ -558,7 +558,7 @@ def process_data(df, option = option):
 
         outcome_columns = ["Código", "Subcuenta", "Padre", "Cuenta del Padre"]
 
-        for i in outcome_df.columns[2:]:
+        for i in outcome_df.columns[4:]:
             outcome_columns.append(i)
 
         outcome_df.columns = outcome_columns
