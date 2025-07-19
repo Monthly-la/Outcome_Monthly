@@ -536,6 +536,52 @@ def process_data(df, option = option):
             df_final_nivel = df_final[[
                 "Código", "Cuenta", "Padre", "Cuenta del Padre", "Bold", "Cargos", "Abonos", "Saldo Neto", "Nivel", "Clase"]]
             
+            # Extraer categoría desde el primer dígito de la cuenta
+            df_final_nivel["Categoría"] = df_final_nivel["Código"].astype(str).str[0]
+            
+            # DataFrame resultado
+            filtradas = pd.DataFrame()
+            
+            # Iterar por cada categoría
+            for categoria in sorted(df_final_nivel["Categoría"].unique()):
+                df_cat = df_final_nivel[df_final_nivel["Categoría"] == categoria].copy()
+            
+                # Definir límite superior según categoría
+                max_cuentas = 49 if categoria in ["1", "2", "3"] else 99
+            
+                # Niveles de granular a general
+                niveles_ordenados = sorted(df_cat["Nivel"].unique(), reverse=True)
+            
+                nivel_aceptado = None
+                for i, nivel in enumerate(niveles_ordenados):
+                    cuentas_nivel = df_cat[df_cat["Nivel"] == nivel]
+                    num_cuentas = len(cuentas_nivel)
+            
+                    if 2 <= num_cuentas <= max_cuentas:
+                        nivel_aceptado = nivel
+                        break
+                    elif num_cuentas < 2:
+                        if i + 1 < len(niveles_ordenados):
+                            siguiente_nivel = niveles_ordenados[i + 1]
+                            cuentas_siguiente = df_cat[df_cat["Nivel"] == siguiente_nivel]
+                            if len(cuentas_siguiente) < 2:
+                                nivel_aceptado = siguiente_nivel
+                                break
+                        else:
+                            nivel_aceptado = nivel
+                            break
+                    elif num_cuentas > max_cuentas:
+                        continue  # Demasiadas cuentas, subir nivel
+                
+                # Conservar jerarquía desde nivel raíz hasta nivel aceptado
+                if nivel_aceptado is not None:
+                    cuentas_finales = df_cat[df_cat["Nivel"] <= nivel_aceptado]
+                    filtradas = pd.concat([filtradas, cuentas_finales])
+            
+            # Reset index
+            filtradas.reset_index(drop=True, inplace=True)
+            df_final_nivel = filtradas.copy()
+            
             # Solo Bold
             #balance_df = df_final_nivel[(df_final_nivel["Bold"] == 1) & (df_final_nivel["Clase"] <= 3)][["Código","Cuenta", "Padre", "Cuenta del Padre", "Saldo Neto"]]
             
