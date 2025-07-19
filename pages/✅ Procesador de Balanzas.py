@@ -378,7 +378,7 @@ def process_data(df, option = option):
             
             #Outcome Matrix
             
-            df_unique = df.drop_duplicates(subset="Código", keep="first").copy()
+            df_unique = df.copy()
             df_unique = df_unique.rename(columns = {"Cuenta":"Código", "Nombre":"Cuenta"})
             cuentas_dict = df_unique.set_index("Código").to_dict(orient="index")
             
