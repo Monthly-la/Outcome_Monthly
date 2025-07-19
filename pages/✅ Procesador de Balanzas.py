@@ -438,7 +438,7 @@ def process_data(df, option = option):
             
             df_completo = df_validado[[
                 "Código", "Cuenta", "Padre", "Cuenta del Padre", "Nivel",
-                "Saldo Neto", "Suma Hijos", "Subcuentas cuadran", "Tiene Hijos", "Estado"
+                "Saldo Neto", "Suma Hijos", "Subcuentas cuadran", "Tiene Hijos", "Estado", "Bold", "Cargos", "Abonos", "Clase"]
             ]]
             
             df_completo_ajuste = pd.DataFrame()
