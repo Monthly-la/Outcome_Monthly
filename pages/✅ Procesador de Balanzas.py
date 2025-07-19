@@ -536,10 +536,10 @@ def process_data(df, option = option):
             df_final_nivel = df_final[[
                 "Código", "Cuenta", "Padre", "Cuenta del Padre", "Bold", "Cargos", "Abonos", "Saldo Neto", "Nivel", "Clase"]]
             
-            balance_df = df[(df["Bold"] == 1) & (df["Clase"] <= 3)][["Código","Cuenta", "Padre", "Cuenta del Padre", "Saldo Neto"]]
+            balance_df = df_final_nivel[(df_final_nivel["Bold"] == 1) & (df_final_nivel["Clase"] <= 3)][["Código","Cuenta", "Padre", "Cuenta del Padre", "Saldo Neto"]]
             balance_df["Sheet"] = tabs_date
 
-            inc_statem_df = df[(df["Clase"] > 3)]
+            inc_statem_df = df_final_nivel[(df_final_nivel["Clase"] > 3)]
             inc_statem_df = inc_statem_df.drop(columns = ["Saldo Neto"])
             inc_statem_df["Saldo Neto"] = inc_statem_df["Cargos"] - inc_statem_df["Abonos"]
             inc_statem_df = inc_statem_df[["Código", "Cuenta", "Padre", "Cuenta del Padre", "Saldo Neto"]]
@@ -566,7 +566,7 @@ def process_data(df, option = option):
 
         outcome_df["Código"] = outcome_df["Código"].astype("str")
         
-        return outcome_df, tidy_df, df
+        return outcome_df, tidy_df, df_final_nivel
 
 #Contalink
     if option == "Contalink":
