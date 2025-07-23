@@ -1,4 +1,37 @@
 import pandas as pd
+import streamlit as st
+import pyexcel as p
+import pandas as pd
+from io import BytesIO
+import numpy as np
+import re
+from openpyxl import load_workbook
+
+
+st.set_page_config(
+    page_title="Monthly - App Interna",
+    page_icon="💸",
+    layout="wide"
+)
+primary_clr = st.get_option("theme.primaryColor")
+
+
+st.markdown("""
+<style>
+button {
+    background-color: #14E79D;
+}
+</style>
+""", unsafe_allow_html=True)
+
+header_logo_1, header_logo_2 = st.columns(2)
+with header_logo_1:
+    st.image(
+                "./Logo. Monthly Oficial.png",
+                width=250, # Manually Adjust the width of the image as per requirement
+            )
+with header_logo_2:
+    st.markdown("<h2 style='text-align: right; color: #5666FF;'>✅ Procesador de Balanzas de Comprobación</h2>", unsafe_allow_html=True)
 
 uploaded_file = st.file_uploader("Sube tu archivo .pptx", type=["pptx"])
 
