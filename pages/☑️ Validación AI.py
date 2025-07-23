@@ -44,7 +44,7 @@ openai = OpenAI(api_key=api_key)
 pptx_file = st.file_uploader("📄 Sube tu reporte PowerPoint (.pptx)", type=["pptx"])
 
 # Cargar manual fijo (PDF)
-with open("manual_control_calidad.pdf", "rb") as f:
+with open("Monthly. Quality checks.pdf", "rb") as f:
     manual_pdf_bytes = f.read()
     manual_pdf_base64 = base64.b64encode(manual_pdf_bytes).decode("utf-8")
 
