@@ -5,6 +5,8 @@ from PIL import Image
 import openai
 import io
 import os
+import base64
+
 
 # Configurar tu API key de OpenAI en secrets de Streamlit Cloud
 openai.api_key = st.secrets["OPENAI_API_KEY"]
@@ -38,16 +40,17 @@ def analyze_with_openai(report_imgs, manual_imgs):
         img_byte = io.BytesIO()
         img.save(img_byte, format='PNG')
         img_byte.seek(0)
-        img_base64 = img_byte.getvalue().hex()
+        img_base64 = base64.b64encode(img_byte.getvalue()).decode("utf-8")
 
         manual_parts = []
         for mimg in manual_imgs:
             m = io.BytesIO()
             mimg.save(m, format='PNG')
             m.seek(0)
+            encoded = base64.b64encode(m.read()).decode("utf-8")
             manual_parts.append({
                 "type": "image_url",
-                "image_url": {"url": "data:image/png;base64," + m.read().hex()}
+                "image_url": {"url": f"data:image/png;base64,{encoded}"}
             })
 
         messages = [
