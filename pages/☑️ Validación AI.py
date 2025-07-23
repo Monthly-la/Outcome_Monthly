@@ -6,6 +6,7 @@ from io import BytesIO
 import numpy as np
 import re
 from openpyxl import load_workbook
+import requests
 
 
 st.set_page_config(
