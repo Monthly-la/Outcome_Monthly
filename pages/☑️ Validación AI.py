@@ -33,7 +33,7 @@ with header_logo_1:
 with header_logo_2:
     st.markdown("<h2 style='text-align: right; color: #5666FF;'>☑️ Validación AI</h2>", unsafe_allow_html=True)
 
-uploaded_file = st.file_uploader("Sube tu archivo .pptx", type=["pptx"])
+uploaded_file = st.file_uploader("Sube tu archivo .pptx")
 
 if uploaded_file:
     st.success("Archivo cargado correctamente.")
