@@ -19,3 +19,4 @@ pyexcel-xls
 pyexcel-xlsx
 openpyxl
 python-pptx
+PyMuPDF
