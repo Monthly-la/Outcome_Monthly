@@ -1,47 +1,68 @@
 import streamlit as st
-import base64
 from openai import OpenAI
+from pptx import Presentation
+from PIL import Image, ImageDraw
+import io
+import base64
+import tempfile
 
-# === CONFIGURACIÓN ===
-st.set_page_config(
-    page_title="Monthly - App Interna",
-    page_icon="💸",
-    layout="wide"
-)
-
+# === CONFIG ===
 client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
 
-# === ESTILO ===
-primary_clr = st.get_option("theme.primaryColor")
+st.set_page_config(page_title="Validación AI - PPTX → GPT-4o", layout="wide")
 
-st.markdown("""
-<style>
-button {
-    background-color: #14E79D;
-}
-</style>
-""", unsafe_allow_html=True)
-
-header_logo_1, header_logo_2 = st.columns(2)
-with header_logo_1:
-    st.image("./Logo. Monthly Oficial.png", width=250)
-with header_logo_2:
-    st.markdown("<h2 style='text-align: right; color: #5666FF;'>☑️ Validación AI</h2>", unsafe_allow_html=True)
-
-# === SUBIR ARCHIVO ===
+st.title("📊 Validación Automática de Reportes CFO con GPT-4o")
 pptx_file = st.file_uploader("📄 Sube tu reporte PowerPoint (.pptx)", type=["pptx"])
 
-# === CARGAR MANUAL FIJO (.pdf) ===
-with open("Monthly. Quality checks.pdf", "rb") as f:
-    manual_pdf_bytes = f.read()
-    manual_pdf_base64 = base64.b64encode(manual_pdf_bytes).decode("utf-8")
+# === FUNCIONES ===
 
-# === PROCESAR ARCHIVO DEL USUARIO ===
+def render_slide_as_image(slide, width=1280, height=720):
+    """Genera imagen vacía y dibuja el texto de los elementos."""
+    img = Image.new("RGB", (width, height), "white")
+    draw = ImageDraw.Draw(img)
+    y_offset = 40
+    for shape in slide.shapes:
+        if hasattr(shape, "text"):
+            draw.text((50, y_offset), shape.text, fill="black")
+            y_offset += 40
+    return img
+
+def pptx_to_base64_images(pptx_bytes):
+    """Convierte cada slide en imagen PNG y codifica a base64."""
+    prs = Presentation(io.BytesIO(pptx_bytes))
+    base64_images = []
+
+    for slide in prs.slides:
+        img = render_slide_as_image(slide)
+        with io.BytesIO() as output:
+            img.save(output, format="PNG")
+            b64 = base64.b64encode(output.getvalue()).decode("utf-8")
+            base64_images.append(b64)
+    return base64_images
+
+def create_gpt4o_payload(images_b64):
+    """Arma la estructura para enviar a GPT-4o con múltiples imágenes"""
+    visual_inputs = []
+    for b64 in images_b64[:5]:  # puedes limitar a 5 slides si quieres
+        visual_inputs.append({
+            "type": "image_url",
+            "image_url": {
+                "url": f"data:image/png;base64,{b64}"
+            }
+        })
+    return visual_inputs
+
+# === PROCESAR ===
 if pptx_file:
-    pptx_bytes = pptx_file.read()
-    pptx_base64 = base64.b64encode(pptx_bytes).decode("utf-8")
+    st.info("Procesando slides del reporte...")
 
-    st.info("Procesando el reporte con GPT-4 Vision...")
+    pptx_bytes = pptx_file.read()
+    slides_b64 = pptx_to_base64_images(pptx_bytes)
+    slide_inputs = create_gpt4o_payload(slides_b64)
+
+    st.success(f"{len(slides_b64)} slides convertidas a imágenes ✅")
+
+    st.info("Enviando slides a GPT-4o para revisión...")
 
     try:
         response = client.chat.completions.create(
@@ -50,40 +71,26 @@ if pptx_file:
                 {
                     "role": "system",
                     "content": (
-                        "Eres un experto en revisión de reportes financieros. "
-                        "Evalúa un archivo PowerPoint según las buenas prácticas contenidas en un manual PDF. "
-                        "Identifica errores, inconsistencias y oportunidades de mejora. "
-                        "Estructura la respuesta por secciones: Resumen, Gráficos, Tablas, Notación, Métricas, Comparativos, Ciclo de Conversión. "
-                        "Termina con una tabla de acciones concretas."
+                        "Eres un experto en análisis financiero. Estás evaluando un reporte trimestral automatizado. "
+                        "Analiza las siguientes diapositivas de PowerPoint buscando errores visuales, gráficos mal calibrados, inconsistencias de notación o malas prácticas. "
+                        "Responde con observaciones claras, estructuradas por sección (Gráficos, Notación, Tablas, Métricas, etc)."
                     )
                 },
                 {
                     "role": "user",
                     "content": [
-                        { "type": "text", "text": "Este es el reporte a revisar (.pptx):" },
-                        {
-                            "type": "image_url",
-                            "image_url": {
-                                "url": f"data:application/vnd.openxmlformats-officedocument.presentationml.presentation;base64,{pptx_base64}"
-                            }
-                        },
-                        { "type": "text", "text": "Este es el manual de revisión (.pdf):" },
-                        {
-                            "type": "image_url",
-                            "image_url": {
-                                "url": f"data:application/pdf;base64,{manual_pdf_base64}"
-                            }
-                        }
+                        { "type": "text", "text": "Aquí están las slides del reporte a revisar:" },
+                        *slide_inputs
                     ]
                 }
             ],
-            temperature=0.4,
-            max_tokens=2000
+            max_tokens=1800,
+            temperature=0.3
         )
 
         st.markdown("### ✅ Evaluación del Reporte:")
         st.write(response.choices[0].message.content)
 
     except Exception as e:
-        st.error("❌ Ocurrió un error al llamar a OpenAI. Revisa tu clave o los archivos subidos.")
+        st.error("❌ Ocurrió un error al llamar a OpenAI.")
         st.exception(e)
