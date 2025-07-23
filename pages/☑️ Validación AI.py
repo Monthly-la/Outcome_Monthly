@@ -6,7 +6,7 @@ from io import BytesIO
 import numpy as np
 import re
 from openpyxl import load_workbook
-from openai import OpenAI
+import openai
 import requests
 import openai
 import base64
@@ -37,7 +37,7 @@ with header_logo_2:
     st.markdown("<h2 style='text-align: right; color: #5666FF;'>☑️ Validación AI</h2>", unsafe_allow_html=True)
 
 api_key = st.secrets["OPENAI_API_KEY"]
-openai = OpenAI(api_key=api_key)
+openai.api_key = st.secrets["OPENAI_API_KEY"]
 
 
 # Subir archivo del usuario
