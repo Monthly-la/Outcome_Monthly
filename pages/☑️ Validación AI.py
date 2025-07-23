@@ -6,8 +6,10 @@ from io import BytesIO
 import numpy as np
 import re
 from openpyxl import load_workbook
+from openai import OpenAI
 import requests
-
+import openai
+import base64
 
 st.set_page_config(
     page_title="Monthly - App Interna",
@@ -34,22 +36,54 @@ with header_logo_1:
 with header_logo_2:
     st.markdown("<h2 style='text-align: right; color: #5666FF;'>☑️ Validación AI</h2>", unsafe_allow_html=True)
 
-uploaded_file = st.file_uploader("Sube tu archivo .pptx")
+api_key = st.secrets["OPENAI_API_KEY"]
+openai = OpenAI(api_key=api_key)
 
-if uploaded_file:
-    st.success("Archivo cargado correctamente.")
 
-    # Enviar archivo al webhook de Make
-    files = {
-        'file': (uploaded_file.name, uploaded_file, uploaded_file.type),
-    }
+# Subir archivo del usuario
+pptx_file = st.file_uploader("📄 Sube tu reporte PowerPoint (.pptx)", type=["pptx"])
 
-    webhook_url = "https://hook.us1.make.com/1vdd4l5k42vrxywo21twpfaii3ociyqr"  # reemplaza con el tuyo
+# Cargar manual fijo (PDF)
+with open("manual_control_calidad.pdf", "rb") as f:
+    manual_pdf_bytes = f.read()
+    manual_pdf_base64 = base64.b64encode(manual_pdf_bytes).decode("utf-8")
 
-    response = requests.post(webhook_url, files=files)
+# Procesar
+if pptx_file:
+    pptx_bytes = pptx_file.read()
+    pptx_base64 = base64.b64encode(pptx_bytes).decode("utf-8")
 
-    if response.status_code == 200:
-        st.success("Enviado correctamente para revisión.")
-    else:
-        st.error("Error al enviar el archivo.")
+    # Armar payload
+    response = openai.ChatCompletion.create(
+        model="gpt-4-vision-preview",
+        messages=[
+            {
+                "role": "system",
+                "content": "Eres un experto en revisión de reportes financieros. Evalúa un archivo PowerPoint según las buenas prácticas contenidas en un manual PDF. Identifica errores, inconsistencias y oportunidades de mejora. Estructura la respuesta por secciones: Resumen, Gráficos, Tablas, Notación, Métricas, Comparativos, Ciclo de Conversión. Termina con una tabla de acciones concretas."
+            },
+            {
+                "role": "user",
+                "content": [
+                    { "type": "text", "text": "Este es el reporte a revisar (.pptx):" },
+                    {
+                        "type": "image_url",
+                        "image_url": {
+                            "url": f"data:application/vnd.openxmlformats-officedocument.presentationml.presentation;base64,{pptx_base64}"
+                        }
+                    },
+                    { "type": "text", "text": "Este es el manual de revisión (.pdf):" },
+                    {
+                        "type": "image_url",
+                        "image_url": {
+                            "url": f"data:application/pdf;base64,{manual_pdf_base64}"
+                        }
+                    }
+                ]
+            }
+        ],
+        max_tokens=2000,
+        temperature=0.4
+    )
 
+    # Mostrar respuesta
+    st.markdown("### ✅ Evaluación del Reporte:")
