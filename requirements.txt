@@ -20,3 +20,4 @@ pyexcel-xlsx
 openpyxl
 python-pptx
 PyMuPDF
+pdf2image
