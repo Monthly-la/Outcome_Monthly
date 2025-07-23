@@ -31,7 +31,7 @@ with header_logo_1:
                 width=250, # Manually Adjust the width of the image as per requirement
             )
 with header_logo_2:
-    st.markdown("<h2 style='text-align: right; color: #5666FF;'>✅ Procesador de Balanzas de Comprobación</h2>", unsafe_allow_html=True)
+    st.markdown("<h2 style='text-align: right; color: #5666FF;'>☑️ Validación AI</h2>", unsafe_allow_html=True)
 
 uploaded_file = st.file_uploader("Sube tu archivo .pptx", type=["pptx"])
 
