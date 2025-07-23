@@ -1,112 +1,78 @@
 import streamlit as st
-from openai import OpenAI
 from pptx import Presentation
-from PIL import Image, ImageDraw
+from pdf2image import convert_from_bytes
+from PIL import Image
+import openai
 import io
-import base64
-import fitz  # PyMuPDF
+import os
 
-# === CONFIGURACIÓN ===
-st.set_page_config(page_title="Validación AI - PPTX", layout="wide")
-client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
+# API Key
+openai.api_key = st.secrets["OPENAI_API_KEY"]  # Defínelo en Secrets de Streamlit Cloud
 
-st.title("📊 Revisión Automática de Reportes CFO (GPT-4o + Manual)")
+st.title("✅ Validación de Reporte con GPT-4o")
+st.markdown("Sube un archivo `.pptx` y el manual en `.pdf`. Analizaremos el reporte basado en los lineamientos del manual.")
 
-# === SUBIDA DE ARCHIVOS ===
-pptx_file = st.file_uploader("📄 Sube tu reporte PowerPoint (.pptx)", type=["pptx"])
+pptx_file = st.file_uploader("📊 Reporte en PowerPoint (.pptx)", type=["pptx"])
+pdf_file = st.file_uploader("📄 Manual de control de calidad (.pdf)", type=["pdf"])
 
-# === FUNCIONES ===
+def pptx_to_images(file):
+    prs = Presentation(file)
+    images = []
+    for i, slide in enumerate(prs.slides):
+        img = Image.new("RGB", (1280, 720), "white")
+        for shape in slide.shapes:
+            if shape.has_text_frame:
+                text = shape.text
+                # Dibujar texto sobre imagen (mock)
+                Image.Image.paste(img, Image.new("RGB", (0, 0)), (0, 0))
+        img_byte_arr = io.BytesIO()
+        img.save(img_byte_arr, format='PNG')
+        images.append(img)
+    return images
 
-def extract_text_from_pdf(path):
-    doc = fitz.open(path)
-    return "\n".join([page.get_text() for page in doc])
+def pdf_to_images(file):
+    return convert_from_bytes(file.read(), fmt='png')
 
-def render_slide_as_image(slide, width=1280, height=720):
-    img = Image.new("RGB", (width, height), "white")
-    draw = ImageDraw.Draw(img)
-    y_offset = 40
-    for shape in slide.shapes:
-        if hasattr(shape, "text"):
-            draw.text((50, y_offset), shape.text, fill="black")
-            y_offset += 40
-    return img
+def analyze_with_openai(report_imgs, manual_imgs):
+    results = []
+    for idx, img in enumerate(report_imgs):
+        img_byte = io.BytesIO()
+        img.save(img_byte, format='PNG')
+        img_byte.seek(0)
 
-def pptx_to_base64_images(pptx_bytes):
-    prs = Presentation(io.BytesIO(pptx_bytes))
-    base64_images = []
-    for slide in prs.slides:
-        img = render_slide_as_image(slide)
-        with io.BytesIO() as output:
-            img.save(output, format="PNG")
-            b64 = base64.b64encode(output.getvalue()).decode("utf-8")
-            base64_images.append(b64)
-    return base64_images
+        manual_bytes = []
+        for mimg in manual_imgs:
+            m = io.BytesIO()
+            mimg.save(m, format='PNG')
+            m.seek(0)
+            manual_bytes.append({"image": m.read(), "mime_type": "image/png"})
 
-def create_gpt4o_payload(images_b64, max_slides=40):
-    inputs = []
-    for b64 in images_b64[:max_slides]:
-        inputs.append({
-            "type": "image_url",
-            "image_url": {
-                "url": f"data:image/png;base64,{b64}"
-            }
-        })
-    return inputs
-
-# === CARGAR MANUAL PDF Y PROCESAR ===
-manual_text = extract_text_from_pdf("Monthly. Quality checks.pdf")
-manual_text_short = manual_text[:15000]  # evitar exceder tokens
-
-# === PROCESAMIENTO DEL REPORTE ===
-if pptx_file:
-    pptx_bytes = pptx_file.read()
-    st.info("🔄 Convirtiendo diapositivas en imágenes...")
-    slides_b64 = pptx_to_base64_images(pptx_bytes)
-    slide_inputs = create_gpt4o_payload(slides_b64, max_slides=40)
-
-    st.success(f"✅ {len(slide_inputs)} diapositivas procesadas.")
-
-    st.info("📨 Enviando a GPT-4o para análisis...")
-
-    try:
-        response = client.chat.completions.create(
+        response = openai.chat.completions.create(
             model="gpt-4o",
             messages=[
-                {
-                    "role": "system",
-                    "content": (
-                        "Tengo el siguiente reporte (formato PowerPoint) y el manual de control de calidad de Monthly. "
-                        "Evalúa todas las diapositivas conforme a dicho manual. "
-                        "Identifica errores, inconsistencias y oportunidades de mejora por sección: Resumen, Gráficos, Tablas, Notación, "
-                        "Métricas, Comparativos, Ciclo de Conversión, etc. Termina con una tabla o lista de recomendaciones para el equipo. \n\n"
-                        "Aquí está el contenido del manual:\n\n"
-                        f"{manual_text_short}"
-                    )
-                },
-                {
-                    "role": "user",
-                    "content": [
-                        { "type": "text", "text": "Este es el reporte a revisar, generado automáticamente:" },
-                        *slide_inputs
+                {"role": "system", "content": "Eres un experto en presentación de informes financieros."},
+                {"role": "user", "content": [
+                    {"type": "text", "text": "Tengo el siguiente reporte (pptx) y el manual de control de calidad (pdf). Dame tus comentarios y revisa el reporte ppt con los lineamientos mencionados en el manual."},
+                    {"type": "image_url", "image_url": {"url": "data:image/png;base64," + img_byte.getvalue().hex()}},
+                    *[
+                        {"type": "image_url", "image_url": {"url": "data:image/png;base64," + m.read().hex()}}
+                        for m in manual_bytes
                     ]
-                }
+                ]}
             ],
-            temperature=0.3,
-            max_tokens=3000
+            max_tokens=1000
         )
+        results.append(f"**Diapositiva {idx+1}:**\n\n" + response.choices[0].message.content)
+    return results
 
-        resultado = response.choices[0].message.content
+if pptx_file and pdf_file:
+    with st.spinner("Convirtiendo archivos..."):
+        pptx_images = pptx_to_images(pptx_file)
+        pdf_images = pdf_to_images(pdf_file)
 
-        st.markdown("### ✅ Evaluación del Reporte:")
-        st.write(resultado)
+    with st.spinner("Analizando con GPT-4o..."):
+        feedbacks = analyze_with_openai(pptx_images, pdf_images)
 
-        st.download_button(
-            label="📥 Descargar evaluación como .txt",
-            data=resultado,
-            file_name="evaluacion_reporte.txt",
-            mime="text/plain"
-        )
-
-    except Exception as e:
-        st.error("❌ Ocurrió un error al llamar a OpenAI.")
-        st.exception(e)
+    st.success("✅ Análisis completo")
+    for comment in feedbacks:
+        st.markdown(comment)
