@@ -34,7 +34,7 @@ with header_logo_1:
                 width=250, # Manually Adjust the width of the image as per requirement
             )
 with header_logo_2:
-    st.markdown("<h2 style='text-align: right; color: #5666FF;'>🤖 Clasificador Automático</h2>", unsafe_allow_html=True)
+    st.markdown("<h2 style='text-align: right; color: #5666FF;'>🏷️ Clasificador Automático</h2>", unsafe_allow_html=True)
 
 st.divider()
 
