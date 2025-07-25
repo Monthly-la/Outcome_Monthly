@@ -1,42 +1,26 @@
 import streamlit as st
 import openai
 from pdf2image import convert_from_bytes
-import tempfile
 import base64
 import io
-import os
-import subprocess
 
 st.set_page_config(page_title="Validación de Reporte GPT-4o", layout="centered")
-
 openai.api_key = st.secrets["OPENAI_API_KEY"]
 
 st.title("✅ Validación de Reporte con GPT-4o")
-st.markdown("Sube un archivo `.pptx`. El manual de control de calidad ya está cargado desde el sistema.")
+st.markdown("Sube tu reporte ya convertido a `.pdf`. El manual de control de calidad ya está cargado desde el sistema.")
 
-pptx_file = st.file_uploader("📊 Reporte en PowerPoint (.pptx)", type=["pptx"])
+pdf_file = st.file_uploader("📄 Reporte en PDF (convertido desde PowerPoint)", type=["pdf"])
 
-# Convertir PPTX a PDF usando libreoffice y luego a imágenes
-def pptx_to_images(file):
-    with tempfile.NamedTemporaryFile(delete=False, suffix=".pptx") as tmp_pptx:
-        tmp_pptx.write(file.read())
-        tmp_pptx.flush()
-        output_pdf = tmp_pptx.name.replace(".pptx", ".pdf")
-        subprocess.run(["libreoffice", "--headless", "--convert-to", "pdf", "--outdir", os.path.dirname(output_pdf), tmp_pptx.name])
-        with open(output_pdf, "rb") as f:
-            images = convert_from_bytes(f.read(), fmt="png")
-    return images
-
-# Convertir manual PDF a imágenes
+# Convertir el manual PDF a imágenes
 def load_manual_images():
     with open("Monthly. Quality checks.pdf", "rb") as f:
         return convert_from_bytes(f.read(), fmt='png')
 
-# Enviar a OpenAI
+# Enviar a GPT-4o
 def analyze_with_openai(report_imgs, manual_imgs):
     results = []
 
-    # Convertir manual a base64 solo una vez
     manual_parts = []
     for mimg in manual_imgs:
         buf = io.BytesIO()
@@ -55,7 +39,7 @@ def analyze_with_openai(report_imgs, manual_imgs):
         messages = [
             {"role": "system", "content": "Eres un experto en presentaciones y control de calidad de reportes financieros."},
             {"role": "user", "content": [
-                {"type": "text", "text": "Tengo el siguiente reporte (pptx) y el manual de control de calidad (pdf). Dame tus comentarios y revisa el reporte ppt con los lineamientos mencionados en el manual."},
+                {"type": "text", "text": "Tengo el siguiente reporte (pdf convertido desde pptx) y el manual de control de calidad (pdf). Dame tus comentarios y revisa el reporte con los lineamientos del manual."},
                 {"type": "image_url", "image_url": {"url": f"data:image/png;base64,{slide_b64}"}},
                 *manual_parts
             ]}
@@ -67,17 +51,16 @@ def analyze_with_openai(report_imgs, manual_imgs):
             max_tokens=1000
         )
 
-        results.append(f"### 🖼 Diapositiva {idx+1}:\n\n{response.choices[0].message.content}")
-
+        results.append(f"### 🖼 Página {idx+1}:\n\n{response.choices[0].message.content}")
     return results
 
-if pptx_file:
-    with st.spinner("Convirtiendo archivos..."):
-        pptx_images = pptx_to_images(pptx_file)
-        pdf_images = load_manual_images()
+if pdf_file:
+    with st.spinner("Convirtiendo PDF a imágenes..."):
+        pptx_images = convert_from_bytes(pdf_file.read(), fmt="png")
+        manual_images = load_manual_images()
 
     with st.spinner("Analizando con GPT-4o..."):
-        feedbacks = analyze_with_openai(pptx_images, pdf_images)
+        feedbacks = analyze_with_openai(pptx_images, manual_images)
 
     st.success("✅ Análisis completo")
     for comment in feedbacks:
